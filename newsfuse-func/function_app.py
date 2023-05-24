@@ -22,7 +22,7 @@ try:
     )
     predictor = MODEL.predict
 except FailedToLoadModelException as e:
-    logging.error(e)
+    logging.error("Failed to load model: " + str(e) + ".\n Using random predictor.")
 
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.FUNCTION)
