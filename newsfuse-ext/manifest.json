@@ -1,0 +1,15 @@
+{
+    "manifest_version": 3,
+    "name": "NewsFuse",
+    "version": "0.1.0",
+    "content_scripts": [
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "js": [
+                "content.js"
+            ]
+        }
+    ]
+}
