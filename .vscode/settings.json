@@ -7,5 +7,10 @@
     "debug.internalConsoleOptions": "neverOpen",
     "azureFunctions.projectSubpath": "newsfuse-func",
     "azureFunctions.projectLanguageModel": 2,
-    "azurite.location": "newsfuse-func"
+    "azurite.location": "newsfuse-func",
+    "python.testing.pytestArgs": [
+        "newsfuse-func"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true
 }

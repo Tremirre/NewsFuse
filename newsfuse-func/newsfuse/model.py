@@ -1,5 +1,5 @@
 import tensorflow as tf
-import tensorflow_text as tf_text
+import tensorflow_text as tf_text  # required for loading model
 
 from pathlib import Path
 from typing import Any
@@ -11,10 +11,10 @@ def load_and_compile_from_path(
     path: Path | str, compile_config: dict[str, Any]
 ) -> tf.keras.Model:
     try:
-        model: tf.keras.Model = tf.keras.models.load_model(path)
+        model: tf.keras.Model = tf.keras.models.load_model(path)  # type: ignore
     except OSError:
         raise FailedToLoadModelException("model at " + str(path) + " does not exist")
-    except tf.errors.NotFoundError:
+    except tf.errors.NotFoundError:  # type: ignore
         raise FailedToLoadModelException(
             "model at " + str(path) + " is not a valid model"
         )

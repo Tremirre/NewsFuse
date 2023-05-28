@@ -22,7 +22,7 @@ class OpinionRemover:
         return [message["text"] for message in response["choices"]]
 
     def send_request(self, content: str) -> dict:
-        return openai.ChatCompletion.create(
+        return openai.ChatCompletion.create(  # type: ignore
             model=self.model,
             messages=[
                 {
