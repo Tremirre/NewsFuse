@@ -1,19 +1,31 @@
+import os
 import azure.functions as func
 import json
 import logging
 import pathlib
 
 import numpy as np
+import dotenv
 
 from newsfuse.inference import predict_classes
 from newsfuse.model import load_and_compile_from_path
 from newsfuse.exceptions import FailedToLoadModelException
+from newsfuse.filter import get_opinionated_indices
+from newsfuse.deopinionize import OpinionRemover
 
-model_path = (pathlib.Path(__file__) / ".." / "models" / "small_bert_model").resolve()
+dotenv.load_dotenv()
+
+fixed_model_path = (
+    pathlib.Path(__file__) / ".." / "models" / "small_bert_model"
+).resolve()
+MODEL_PATH = os.environ.get("MODEL_PATH", fixed_model_path)
+DECISION_THRESHOLD = float(os.environ.get("DECISION_THRESHOLD", 0.5))
+OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
+
 predictor = lambda x: np.random.rand(len(x))
 try:
     MODEL = load_and_compile_from_path(
-        model_path,
+        MODEL_PATH,
         {
             "optimizer": "adam",
             "loss": "binary_crossentropy",
@@ -24,7 +36,7 @@ try:
 except FailedToLoadModelException as e:
     logging.error("Failed to load model: " + str(e) + ".\n Using random predictor.")
 
-
+oppinion_remover = OpinionRemover(OPENAI_API_KEY)
 app = func.FunctionApp(http_auth_level=func.AuthLevel.FUNCTION)
 
 
@@ -51,4 +63,20 @@ def newsfusebackend(req: func.HttpRequest) -> func.HttpResponse:
             mimetype="application/json",
         )
     pred = predict_classes(corpus, predictor)
-    return func.HttpResponse(json.dumps(pred), mimetype="application/json")
+    opinionated_indices = get_opinionated_indices(pred, DECISION_THRESHOLD)
+    opinionated_sentences = [corpus[i] for i in opinionated_indices]
+    deopinionated_sentences = oppinion_remover.remove_opinions(opinionated_sentences)
+
+    translations = [None] * len(pred)
+    for index, sentence in zip(opinionated_indices, deopinionated_sentences):
+        translations[index] = sentence
+    result = {
+        "predictions": pred,
+        "translations": translations,
+    }
+    if not deopinionated_sentences and opinionated_indices:
+        result.pop("translations")
+    return func.HttpResponse(
+        json.dumps(result),
+        mimetype="application/json",
+    )

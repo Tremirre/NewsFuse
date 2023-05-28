@@ -22,3 +22,5 @@ tf-models-official==2.10.1
 nltk==3.8.1
 numpy==1.24.3
 lime==0.2.0.1
+python-dotenv
+openai
