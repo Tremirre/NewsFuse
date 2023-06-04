@@ -8,18 +8,25 @@ def merge_sentences(sentences: list[str]) -> str:
 
 
 class OpinionRemover:
-    def __init__(self, translation_key: str, model: str = "gpt-3.5-turbo") -> None:
+    def __init__(
+        self,
+        translation_key: str,
+        task: str,
+        model: str = "gpt-3.5-turbo",
+    ) -> None:
         self.model = model
+        self.task = task
         openai.api_key = translation_key
 
-    def remove_opinions(self, sentences: list[str]) -> list[str]:
+    def remove_opinions(self, sentences: list[str]) -> dict | None:
+        if not sentences:
+            return []
         corpus = merge_sentences(sentences)
         try:
-            response = self.send_request(corpus)
+            return self.send_request(corpus)
         except openai.OpenAIError as e:
             logging.error("Failed to send request to OpenAI: " + str(e))
             return []
-        return [message["text"] for message in response["choices"]]
 
     def send_request(self, content: str) -> dict:
         return openai.ChatCompletion.create(  # type: ignore
@@ -27,7 +34,7 @@ class OpinionRemover:
             messages=[
                 {
                     "role": "system",
-                    "content": "You are an expert in objective, unopinionated writing. Rewrite each of the following sentences to remove any opinions.",
+                    "content": self.task,
                 },
                 {"role": "user", "content": content},
             ],

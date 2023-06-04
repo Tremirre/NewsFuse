@@ -5,9 +5,10 @@ import logging
 import pathlib
 
 import numpy as np
+import yaml
 import dotenv
 
-from newsfuse import preprocess
+from newsfuse import preprocess, postprocess
 from newsfuse.model import load_and_compile_from_path
 from newsfuse.exceptions import FailedToLoadModelException
 from newsfuse.deopinionize import OpinionRemover
@@ -23,6 +24,12 @@ LENGTH_THRESHOLD = int(os.environ.get("LENGTH_THRESHOLD", 5))
 WORD_COUNT_THRESHOLD = int(os.environ.get("WORD_COUNT_THRESHOLD", 2))
 OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
 
+with open("config.yaml") as f:
+    CONFIG = yaml.safe_load(f)
+
+EMPTY_TOKEN = CONFIG["empty_token"]
+TASK = CONFIG["task"].format(EMPTY_TOKEN)
+
 predictor = lambda x: np.random.rand(len(x))
 try:
     MODEL = load_and_compile_from_path(
@@ -37,13 +44,12 @@ try:
 except FailedToLoadModelException as e:
     logging.error("Failed to load model: " + str(e) + ".\n Using random predictor.")
 
-oppinion_remover = OpinionRemover(OPENAI_API_KEY)
+oppinion_remover = OpinionRemover(OPENAI_API_KEY, TASK)
 app = func.FunctionApp(http_auth_level=func.AuthLevel.FUNCTION)
 
 
 @app.route(route="newsfusebackend")
 def newsfusebackend(req: func.HttpRequest) -> func.HttpResponse:
-    logging.info("Python HTTP trigger function processed a request.")
     if req.method != "POST":
         return func.HttpResponse(
             "Only POST requests are allowed", status_code=405  # Method Not Allowed
@@ -86,11 +92,13 @@ def newsfusebackend(req: func.HttpRequest) -> func.HttpResponse:
     for index, prediction in zip(valid.keys(), predictions):
         classification[index] = prediction.item()
 
-    deopinionated_sentences = oppinion_remover.remove_opinions(opinionated_sentences)
-    deopinionated_indexed = {
-        index: new_sentence
-        for index, new_sentence in zip(valid.keys(), deopinionated_sentences)
-    }
+    api_response = oppinion_remover.remove_opinions(opinionated_sentences)
+    deopinionated_indexed = {}
+    if api_response:
+        deopinionated_sentences = postprocess.process_api_response(api_response)
+        deopinionated_indexed = postprocess.format_to_indexed_dict(
+            deopinionated_sentences, EMPTY_TOKEN, opinionated.tolist()
+        )
     result = {
         "sentences": list(all_sentences.values()),
         "classification": classification,
