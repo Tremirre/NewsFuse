@@ -9,13 +9,29 @@
             ],
             "js": [
                 "content.js"
+            ],
+            "css": [
+                "content.css"
             ]
         }
     ],
+    "background": {
+        "service_worker": "background.js"
+    },
     "icons": {
         "128": "icons/128.png",
         "64": "icons/64.png",
         "32": "icons/32.png",
         "16": "icons/16.png"
+    },
+    "action": {
+        "default_icon": {
+            "128": "icons/128.png",
+            "64": "icons/64.png",
+            "32": "icons/32.png",
+            "16": "icons/16.png"
+        },
+        "default_popup": "popup/popup.html",
+        "default_title": "NewsFuse"
     }
 }

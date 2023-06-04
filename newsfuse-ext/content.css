@@ -1,0 +1,5 @@
+.nf-hovered-item {
+    outline: red solid 1px !important;
+    cursor: pointer;
+    transition: all 0.1s ease-in-out;
+}
