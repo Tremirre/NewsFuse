@@ -31,15 +31,16 @@ function showClassification(classification, sentences, element) {
         const firstWord = sentence.split(" ")[0];
         const lastWord = sentence.split(" ").slice(-1)[0].replace('.', '\\.');
         const regex = new RegExp(`${firstWord}\\b.*\\b${lastWord}`, 'g');
-        let match;
-        while ((match = regex.exec(element.innerHTML)) !== null) {
-            const firstIndex = match.index;
-            const lastIndex = match.index + match[0].length - 1;
-            const textBefore = element.innerHTML.substring(0, firstIndex);
-            const textMiddle = element.innerHTML.substring(firstIndex, lastIndex + 1);
-            const textAfter = element.innerHTML.substring(lastIndex + 1);
-            element.innerHTML = `${textBefore}${openTag}${textMiddle}${closeTag}${textAfter}`
+        const match = regex.exec(element.innerHTML);
+        if (match === null) {
+            continue;
         }
+        const firstIndex = match.index;
+        const lastIndex = match.index + match[0].length - 1;
+        const textBefore = element.innerHTML.substring(0, firstIndex);
+        const textMiddle = element.innerHTML.substring(firstIndex, lastIndex + 1);
+        const textAfter = element.innerHTML.substring(lastIndex + 1);
+        element.innerHTML = `${textBefore}${openTag}${textMiddle}${closeTag}${textAfter}`
     }
 }
 
