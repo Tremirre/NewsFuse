@@ -1,5 +1,13 @@
-console.log("content.js loaded")
+console.log("NF: content.js loaded")
 var highlightedElement = null;
+var stayInPickerMode = false;
+
+function determineColor(prediction) {
+    if (prediction < 0.5) {
+        return `rgba(0, 255, 0, ${0.5 - prediction})`;
+    }
+    return `rgba(255, 0, 0, ${(prediction - 0.5)})`;
+}
 
 function mouseoverCallback(event) {
     if (highlightedElement) {
@@ -9,33 +17,93 @@ function mouseoverCallback(event) {
     highlightedElement.classList.add("nf-hovered-item");
 }
 
-function stopPickerMode() {
-    console.log("stopPickerMode");
-    document.removeEventListener("mouseover", mouseoverCallback);
-    document.removeEventListener("click", clickPickerCallbakc);
+function showClassification(classification, sentences, element) {
+    for (const [index, sentence] of sentences.entries()) {
+        const sentencePrediction = classification[index];
+        const color = determineColor(sentencePrediction);
+        const openTag = `<span class="nf-highlighted-sentence" style="background-color: ${color};"}>`;
+        const closeTag = "</span>";
+        const replacement = `${openTag}${sentence}${closeTag}`;
+        if (element.innerHTML.includes(sentence)) {
+            element.innerHTML = element.innerHTML.replace(sentence, replacement);
+            continue;
+        }
+        const firstWord = sentence.split(" ")[0];
+        const lastWord = sentence.split(" ").slice(-1)[0].replace('.', '\\.');
+        const regex = new RegExp(`${firstWord}\\b.*\\b${lastWord}`, 'g');
+        let match;
+        while ((match = regex.exec(element.innerHTML)) !== null) {
+            const firstIndex = match.index;
+            const lastIndex = match.index + match[0].length - 1;
+            const textBefore = element.innerHTML.substring(0, firstIndex);
+            const textMiddle = element.innerHTML.substring(firstIndex, lastIndex + 1);
+            const textAfter = element.innerHTML.substring(lastIndex + 1);
+            element.innerHTML = `${textBefore}${openTag}${textMiddle}${closeTag}${textAfter}`
+        }
+    }
 }
 
-function clickPickerCallbakc(event) {
+function stopPickerMode() {
+    console.log("NF: stopPickerMode");
+    document.removeEventListener("mouseover", mouseoverCallback);
+    document.removeEventListener("click", clickPickerCallback);
+    highlightedElement = null;
+}
+
+async function classifyElementContent(element) {
+    try {
+        const response = await new Promise((resolve, reject) => {
+            chrome.runtime.sendMessage(
+                { action: 'classify', content: element.textContent },
+                (response) => {
+                    if (response.error) {
+                        reject(new Error(response.error));
+                    } else {
+                        resolve(response);
+                    }
+                }
+            );
+        });
+        var classification = response.classification;
+        var sentences = response.sentences;
+        console.log("NF: Classification:", classification);
+        console.log("NF: Sentences:", sentences);
+        showClassification(classification, sentences, element);
+    } catch (error) {
+        console.log("NF: Error:", error.message);
+    }
+}
+
+function clickPickerCallback(event) {
     if (!highlightedElement) {
         return;
     }
+    console.log("NF: clickPickerCallback");
     var elementContent = highlightedElement.textContent;
-    console.log(elementContent);
+    if (elementContent.length > 1000) {
+        console.log("NF: Element content too long");
+        return;
+    }
     highlightedElement.classList.remove("nf-hovered-item");
-    highlightedElement = null;
-    stopPickerMode();
+    const savedElement = highlightedElement;
+    classifyElementContent(savedElement);
 }
-
 
 function startPickerMode() {
     document.addEventListener("mouseover", mouseoverCallback);
-    document.addEventListener("click", clickPickerCallbakc);
+    document.addEventListener("click", clickPickerCallback);
 }
 
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     if (message.action === "popupMessage") {
-        if (message.message === "picker") {
+        if (message.message === "startPicker") {
             startPickerMode();
+        } else if (message.message === "stopPicker") {
+            stopPickerMode();
+        } else if (message.message === "parse") {
+            document.querySelectorAll("p").forEach((element) => {
+                classifyElementContent(element);
+            });
         }
     }
 });

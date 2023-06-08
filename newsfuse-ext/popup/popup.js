@@ -1,13 +1,27 @@
 document.addEventListener("DOMContentLoaded", function () {
     const btnGrabber = document.getElementById("btn-text-grabber");
     const btnDebug = document.getElementById("btn-debug-mode");
+    const btnParse = document.getElementById("btn-parse");
+    const btnGrabberLabelModeEnabled = "Leave Grabber Mode";
+    const btnGrabberLabelModeDisabled = "Enter Grabber Mode";
+    btnGrabber.textContent = btnGrabberLabelModeDisabled;
 
     btnGrabber.addEventListener("click", function () {
-        sendMessage("picker");
+        if (btnGrabber.textContent === btnGrabberLabelModeDisabled) {
+            btnGrabber.textContent = btnGrabberLabelModeEnabled;
+            sendMessage("startPicker");
+        } else {
+            btnGrabber.textContent = btnGrabberLabelModeDisabled;
+            sendMessage("stopPicker");
+        }
     });
 
     btnDebug.addEventListener("click", function () {
         sendMessage("debug");
+    });
+
+    btnParse.addEventListener("click", function () {
+        sendMessage("parse");
     });
 });
 
