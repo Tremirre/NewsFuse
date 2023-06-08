@@ -62,7 +62,7 @@ def newsfusebackend(req: func.HttpRequest) -> func.HttpResponse:
             status_code=400,
             mimetype="application/json",
         )
-    corpus = req_body.get("corpus")
+    corpus = req_body.get("corpus", "").strip()
     omit_rewrite = req_body.get("omitRewrite", False)
     if not corpus:
         return func.HttpResponse(
