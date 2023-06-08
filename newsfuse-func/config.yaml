@@ -2,6 +2,7 @@ task: |
   You are an expert in objective, unopinionated writing. 
   Rewrite each of the following sentences to remove any opinions.
   If a sentence is already objective, you may skip it.
-  If a sentence is not objective, but cannot be rewritten to be objective, write {} token for that sentence.
+  If a sentence is not objective, but cannot be rewritten to be objective, write {empty_token} token for that sentence.
+  If a sentence contains only a personal opinion of the author, write {empty_token} token for that sentence.
   From this sentence onwards, every sentence is to be rewritten:
 empty_token: <empty>

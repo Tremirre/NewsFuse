@@ -28,7 +28,7 @@ with open("config.yaml") as f:
     CONFIG = yaml.safe_load(f)
 
 EMPTY_TOKEN = CONFIG["empty_token"]
-TASK = CONFIG["task"].format(EMPTY_TOKEN)
+TASK = CONFIG["task"].format(empty_token=EMPTY_TOKEN)
 
 predictor = lambda x: np.random.rand(len(x))
 try:
@@ -63,6 +63,7 @@ def newsfusebackend(req: func.HttpRequest) -> func.HttpResponse:
             mimetype="application/json",
         )
     corpus = req_body.get("corpus")
+    omit_rewrite = req_body.get("omitRewrite", False)
     if not corpus:
         return func.HttpResponse(
             json.dumps({"error": "Missing corpus in request body."}),
@@ -92,13 +93,14 @@ def newsfusebackend(req: func.HttpRequest) -> func.HttpResponse:
     for index, prediction in zip(valid.keys(), predictions):
         classification[index] = prediction.item()
 
-    api_response = oppinion_remover.remove_opinions(opinionated_sentences)
     deopinionated_indexed = {}
-    if api_response:
-        deopinionated_sentences = postprocess.process_api_response(api_response)
-        deopinionated_indexed = postprocess.format_to_indexed_dict(
-            deopinionated_sentences, EMPTY_TOKEN, opinionated.tolist()
-        )
+    if not omit_rewrite:
+        api_response = oppinion_remover.remove_opinions(opinionated_sentences)
+        if api_response:
+            deopinionated_sentences = postprocess.process_api_response(api_response)
+            deopinionated_indexed = postprocess.format_to_indexed_dict(
+                deopinionated_sentences, EMPTY_TOKEN, opinionated.tolist()
+            )
     result = {
         "sentences": list(all_sentences.values()),
         "classification": classification,
