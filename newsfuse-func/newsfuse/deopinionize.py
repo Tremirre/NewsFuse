@@ -26,7 +26,7 @@ class OpinionRemover:
             return self.send_request(corpus)
         except openai.OpenAIError as e:
             logging.error("Failed to send request to OpenAI: " + str(e))
-            return []
+            return None
 
     def send_request(self, content: str) -> dict:
         return openai.ChatCompletion.create(  # type: ignore

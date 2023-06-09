@@ -96,8 +96,8 @@ def newsfusebackend(req: func.HttpRequest) -> func.HttpResponse:
     deopinionated_indexed = {}
     if not omit_rewrite:
         api_response = oppinion_remover.remove_opinions(opinionated_sentences)
-        logging.info(f"Used tokens: {api_response['usage']['total_tokens']}")
         if api_response:
+            logging.info(f"Used tokens: {api_response['usage']['total_tokens']}")
             deopinionated_sentences = postprocess.process_api_response(api_response)
             deopinionated_indexed = postprocess.format_to_indexed_dict(
                 deopinionated_sentences, EMPTY_TOKEN, opinionated.tolist()
