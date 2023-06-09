@@ -4,15 +4,28 @@ document.addEventListener("DOMContentLoaded", function () {
     const btnParse = document.getElementById("btn-parse");
     const btnGrabberLabelModeEnabled = "Leave Grabber Mode";
     const btnGrabberLabelModeDisabled = "Enter Grabber Mode";
-    btnGrabber.textContent = btnGrabberLabelModeDisabled;
+    chrome.storage.sync.get(['grabberModeEnabled'], function(result) {
+        if (result.grabberModeEnabled) {
+            btnGrabber.textContent = btnGrabberLabelModeEnabled;
+        } else {
+            btnGrabber.textContent = btnGrabberLabelModeDisabled;
+        }
+    });
 
     btnGrabber.addEventListener("click", function () {
+        chrome.storage
         if (btnGrabber.textContent === btnGrabberLabelModeDisabled) {
             btnGrabber.textContent = btnGrabberLabelModeEnabled;
             sendMessage("startPicker");
+            chrome.storage.sync.set({grabberModeEnabled: true}, function() {
+                console.log('NF: Grabber mode enabled');
+            });
         } else {
             btnGrabber.textContent = btnGrabberLabelModeDisabled;
             sendMessage("stopPicker");
+            chrome.storage.sync.set({grabberModeEnabled: false}, function() {
+                console.log('NF: Grabber mode disabled');
+            });
         }
     });
 

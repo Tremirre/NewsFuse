@@ -48,6 +48,7 @@ function stopPickerMode() {
     console.log("NF: stopPickerMode");
     document.removeEventListener("mouseover", mouseoverCallback);
     document.removeEventListener("click", clickPickerCallback);
+    highlightedElement.classList.remove("nf-hovered-item");
     highlightedElement = null;
 }
 
