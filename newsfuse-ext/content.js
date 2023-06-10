@@ -4,6 +4,14 @@ var translationMode = false;
 var grabberMode = false;
 
 const TRANSLATED_COLOR = "rgba(0, 0, 255, 0.4)";
+const TRANSLATED_CLASS = "nf-translated-sentence";
+const HIGHLIGHTED_CLASS = "nf-highlighted-sentence";
+const ELEMENT_VISITED_CLASS = "nf-visited-element";
+
+const REPLACEMENT_MAP = {
+    "\xa0": " ",
+}
+
 function determinePredictionColor(prediction) {
     if (prediction < 0.5) {
         return `rgba(0, 255, 0, ${0.5 - prediction})`;
@@ -19,13 +27,40 @@ function mouseoverCallback(event) {
     highlightedElement.classList.add("nf-hovered-item");
 }
 
-function findBoundingIndices(sentence, element, fromIndex = 0) {
-    const firstWord = sentence.split(" ")[0];
-    const lastWord = sentence.split(" ").slice(-1)[0].replace('.', '\\.');
+function normalizeSentence(sentence) {
+    var normalized = sentence;
+    for (const [key, value] of Object.entries(REPLACEMENT_MAP)) {
+        normalized = normalized.replace(key, value);
+    }
+    return normalized;
+}
+
+function findMatch(sentence, text) {
+    const sentenceNormalized = normalizeSentence(sentence);
+    const firstWord = sentenceNormalized.split(" ")[0];
+    const lastWord = sentenceNormalized.split(" ").slice(-1)[0].replace('.', '\\.');
+
     const sentenceMidLength = sentence.length - firstWord.length - lastWord.length;
-    const regex = new RegExp(`${firstWord}\\b.{${sentenceMidLength},}\\b${lastWord}`, 'g');
+    const regex = new RegExp(`${firstWord}.{${sentenceMidLength},}${lastWord}`, 'g');
+    var match = regex.exec(text);
+
+    if (match !== null) {
+        return match;
+    }
+
+    if (lastWord.slice(-1)[0] === ".") {
+        // Retry in case the sentence ends with a closing tag between last word and period
+        const regex = new RegExp(`${firstWord}.{${sentenceMidLength},}>\\.`, 'g');
+        match = regex.exec(text);
+        return match;
+    }
+
+    return null;
+}
+
+function findBoundingIndices(sentence, element, fromIndex = 0) {
     const text = element.innerHTML.substring(fromIndex);
-    const match = regex.exec(text);
+    var match = findMatch(sentence, text);
     if (match === null) {
         return null;
     }
@@ -41,7 +76,7 @@ function showClassification(classification, sentences, element) {
     for (const [index, sentence] of sentences.entries()) {
         const sentencePrediction = classification[index];
         const color = determinePredictionColor(sentencePrediction);
-        const openTag = `<span class="nf-highlighted-sentence" style="background-color: ${color};"}>`;
+        const openTag = `<span class="${HIGHLIGHTED_CLASS}" style="background-color: ${color};"}>`;
         const closeTag = "</span>";
         const replacement = `${openTag}${sentence}${closeTag}`;
         if (element.innerHTML.includes(sentence)) {
@@ -97,6 +132,10 @@ function stopPickerMode() {
 }
 
 async function processElement(element) {
+    if (element.classList.contains(ELEMENT_VISITED_CLASS)) {
+        console.warn("NF: Element already visited");
+        return;
+    }
     try {
         const response = await new Promise((resolve, reject) => {
             const action = translationMode ? 'translate' : 'classify';
@@ -116,7 +155,8 @@ async function processElement(element) {
         var sentences = response.sentences;
         console.log("NF: Classification:", classification);
         console.log("NF: Sentences:", sentences);
-        if (translationMode) {
+        element.classList.add(ELEMENT_VISITED_CLASS);
+        if (translationMode && response.translations) {
             var translations = response.translations;
             console.log("NF: Translations:", translations);
             translateContent(translations, sentences, element);
