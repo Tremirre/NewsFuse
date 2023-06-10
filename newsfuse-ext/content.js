@@ -2,11 +2,13 @@ console.log("NF: content.js loaded")
 var highlightedElement = null;
 var translationMode = false;
 var grabberMode = false;
+var highlightHidden = false;
 
-const TRANSLATED_COLOR = "rgba(0, 0, 255, 0.4)";
+const ORIGINAL_CLASS = "nf-original-sentence";
 const TRANSLATED_CLASS = "nf-translated-sentence";
 const HIGHLIGHTED_CLASS = "nf-highlighted-sentence";
 const ELEMENT_VISITED_CLASS = "nf-visited-element";
+const DEHIGHLIGHETED_CLASS = "nf-style-hidden";
 
 const REPLACEMENT_MAP = {
     "\xa0": " ",
@@ -76,7 +78,11 @@ function showClassification(classification, sentences, element) {
     for (const [index, sentence] of sentences.entries()) {
         const sentencePrediction = classification[index];
         const color = determinePredictionColor(sentencePrediction);
-        const openTag = `<span class="${HIGHLIGHTED_CLASS}" style="background-color: ${color};"}>`;
+        var tagClass = HIGHLIGHTED_CLASS
+        if (highlightHidden) {
+            tagClass += " " + DEHIGHLIGHETED_CLASS;
+        }
+        const openTag = `<span class="${tagClass}" style="background-color: ${color};"}>`;
         const closeTag = "</span>";
         const replacement = `${openTag}${sentence}${closeTag}`;
         if (element.innerHTML.includes(sentence)) {
@@ -100,23 +106,32 @@ function translateContent(translations, sentences, element) {
     if (translations === null) return;
     var firstIndex = 0;
     var lastIndex = 0;
+    var tagOffset = 0;
     for (const [index, translated] of Object.entries(translations)) {
         const sentence = sentences[index];
-        const openTag = `<span class="nf-translated-sentence" style="background-color: ${TRANSLATED_COLOR};"}>`;
-        const closeTag = "</span>";
-        const replacement = `${openTag}${translated}${closeTag}`;
+        var tagClass = TRANSLATED_CLASS;
+        if (highlightHidden) {
+            tagClass += " " + DEHIGHLIGHETED_CLASS;
+        }
+        const openTagOriginal = `<span class="${ORIGINAL_CLASS}">`;
+        const closeTagOriginal = "</span>";
+        const openTagTranslated = `<span class="${tagClass}">`;
+        const closeTagTranslated = "</span>";
+        const replacement = `${openTagOriginal}${sentence}${closeTagOriginal}${openTagTranslated}${translated}${closeTagTranslated}`;
         if (element.innerHTML.includes(sentence)) {
             element.innerHTML = element.innerHTML.replace(sentence, replacement);
             continue;
         }
-        const boundingIndices = findBoundingIndices(sentence, element, lastIndex);
+        const boundingIndices = findBoundingIndices(sentence, element, lastIndex + tagOffset);
         if (boundingIndices === null) {
             continue;
         }
         [firstIndex, lastIndex] = boundingIndices;
         const textBefore = element.innerHTML.substring(0, firstIndex);
         const textAfter = element.innerHTML.substring(lastIndex + 1);
+        const lengthBefore = element.innerHTML.length;
         element.innerHTML = `${textBefore}${replacement}${textAfter}`
+        tagOffset = element.innerHTML.length - lengthBefore;
     }
 }
 
@@ -206,7 +221,29 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
             translationMode = false;
             console.log("NF: Translation mode disabled");
         } else if (message.message === "popupLoaded") {
-            sendResponse({ translationMode: translationMode , grabberMode: grabberMode});
+            sendResponse(
+                { 
+                    translationMode: translationMode, 
+                    grabberMode: grabberMode,
+                    highlightHidden: highlightHidden 
+                }
+            );
+        } else if (message.message === "hideHighlights") {
+            document.querySelectorAll("." + HIGHLIGHTED_CLASS).forEach((element) => {
+                element.classList.add(DEHIGHLIGHETED_CLASS);
+            });
+            document.querySelectorAll("." + TRANSLATED_CLASS).forEach((element) => {
+                    element.classList.add(DEHIGHLIGHETED_CLASS);
+            });
+            document.querySelectorAll("." + ORIGINAL_CLASS).forEach((element) => {
+                element.classList.add(DEHIGHLIGHETED_CLASS);
+            });
+            highlightHidden = true;
+        } else if (message.message === "showHighlights") {
+            document.querySelectorAll("." + DEHIGHLIGHETED_CLASS).forEach((element) => {
+                element.classList.remove(DEHIGHLIGHETED_CLASS);
+            });
+            highlightHidden = false;
         }
     }
 });
