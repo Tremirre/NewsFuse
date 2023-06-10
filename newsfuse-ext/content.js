@@ -1,7 +1,7 @@
 console.log("NF: content.js loaded")
 var highlightedElement = null;
-var stayInPickerMode = false;
 var translationMode = false;
+var grabberMode = false;
 
 const TRANSLATED_COLOR = "rgba(0, 0, 255, 0.4)";
 function determinePredictionColor(prediction) {
@@ -87,6 +87,7 @@ function translateContent(translations, sentences, element) {
 
 function stopPickerMode() {
     console.log("NF: stopPickerMode");
+    grabberMode = false;
     document.removeEventListener("mouseover", mouseoverCallback);
     document.removeEventListener("click", clickPickerCallback);
     if (highlightedElement) {
@@ -143,6 +144,7 @@ function clickPickerCallback(event) {
 }
 
 function startPickerMode() {
+    grabberMode = true;
     document.addEventListener("mouseover", mouseoverCallback);
     document.addEventListener("click", clickPickerCallback);
 }
@@ -163,6 +165,8 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         } else if (message.message === "translateOff") {
             translationMode = false;
             console.log("NF: Translation mode disabled");
+        } else if (message.message === "popupLoaded") {
+            sendResponse({ translationMode: translationMode , grabberMode: grabberMode});
         }
     }
 });
