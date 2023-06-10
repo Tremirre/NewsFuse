@@ -22,8 +22,9 @@ function mouseoverCallback(event) {
 function findBoundingIndices(sentence, element, fromIndex = 0) {
     const firstWord = sentence.split(" ")[0];
     const lastWord = sentence.split(" ").slice(-1)[0].replace('.', '\\.');
-    const regex = new RegExp(`${firstWord}\\b.*\\b${lastWord}`, 'g');
-    const text = fromIndex === 0 ? element.innerHTML : element.innerHTML.substring(fromIndex + 1);
+    const sentenceMidLength = sentence.length - firstWord.length - lastWord.length;
+    const regex = new RegExp(`${firstWord}\\b.{${sentenceMidLength},}\\b${lastWord}`, 'g');
+    const text = element.innerHTML.substring(fromIndex);
     const match = regex.exec(text);
     if (match === null) {
         return null;
