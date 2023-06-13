@@ -22,11 +22,8 @@ jobs:
       url: ${{ steps.deploy-to-function.outputs.webapp-url }}
 
     steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v2
-        with:
-          name: python-app
-          path: .
+      - name: 'Checkout Github Action'
+        uses: actions/checkout@v2
 
       - name: 'Deploy to Azure Functions'
         uses: Azure/functions-action@v1
