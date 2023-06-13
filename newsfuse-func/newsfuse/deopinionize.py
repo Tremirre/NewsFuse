@@ -20,7 +20,7 @@ class OpinionRemover:
 
     def remove_opinions(self, sentences: list[str]) -> dict | None:
         if not sentences:
-            return []
+            return None
         corpus = merge_sentences(sentences)
         try:
             return self.send_request(corpus)
