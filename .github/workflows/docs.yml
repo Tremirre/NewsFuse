@@ -4,10 +4,10 @@
 name: Build NewsFuse Docs
 
 on:
-  workflow_run:
-    workflows: ["Build NewsFuse Function"]
-    types:
-      - completed
+  push:
+    branches: ["docs-cicd-testing"]
+  pull_request:
+    branches: ["docs-cicd-testing"]
 
 jobs:
   docs:
@@ -30,6 +30,7 @@ jobs:
         run: |
           sphinx-apidoc -o ./docs/ ./newsfuse/
           sphinx-build -b html ./docs/ ./docs/_build
+          ls -la ./docs/_build
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
