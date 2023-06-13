@@ -44,7 +44,7 @@ try:
             "metrics": ["accuracy"],
         },
     )
-    predictor = MODEL.predict
+    predictor = MODEL.predict  # noqa: F811
 except FailedToLoadModelException as e:
     logging.error(
         "Failed to load model: " + str(e) + ".\n Using random predictor."
