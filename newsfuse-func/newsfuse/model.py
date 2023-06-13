@@ -8,14 +8,20 @@ from typing import Any
 
 from .exceptions import FailedToLoadModelException
 
+assert tf_text  # silence unused import warning
+
 
 def load_and_compile_from_path(
     path: Path | str, compile_config: dict[str, Any]
 ) -> tf.keras.Model:
     try:
-        model: tf.keras.Model = tf.keras.models.load_model(path, compile=False)  # type: ignore
+        model: tf.keras.Model = tf.keras.models.load_model(
+            path, compile=False
+        )  # type: ignore
     except OSError:
-        raise FailedToLoadModelException("model at " + str(path) + " does not exist")
+        raise FailedToLoadModelException(
+            "model at " + str(path) + " does not exist"
+        )
     except tf.errors.NotFoundError:  # type: ignore
         raise FailedToLoadModelException(
             "model at " + str(path) + " is not a valid model"

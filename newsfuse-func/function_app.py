@@ -30,7 +30,11 @@ with open("config.yaml") as f:
 EMPTY_TOKEN = CONFIG["empty_token"]
 TASK = CONFIG["task"].format(empty_token=EMPTY_TOKEN)
 
-predictor = lambda x: np.random.rand(len(x))
+
+def predictor(x):
+    return np.random.rand(len(x))
+
+
 try:
     MODEL = load_and_compile_from_path(
         MODEL_PATH,
@@ -42,7 +46,9 @@ try:
     )
     predictor = MODEL.predict
 except FailedToLoadModelException as e:
-    logging.error("Failed to load model: " + str(e) + ".\n Using random predictor.")
+    logging.error(
+        "Failed to load model: " + str(e) + ".\n Using random predictor."
+    )
 
 oppinion_remover = OpinionRemover(OPENAI_API_KEY, TASK)
 app = func.FunctionApp(http_auth_level=func.AuthLevel.FUNCTION)
@@ -52,7 +58,8 @@ app = func.FunctionApp(http_auth_level=func.AuthLevel.FUNCTION)
 def newsfusebackend(req: func.HttpRequest) -> func.HttpResponse:
     if req.method != "POST":
         return func.HttpResponse(
-            "Only POST requests are allowed", status_code=405  # Method Not Allowed
+            "Only POST requests are allowed",
+            status_code=405,  # Method Not Allowed
         )
     try:
         req_body = req.get_json()
@@ -97,8 +104,12 @@ def newsfusebackend(req: func.HttpRequest) -> func.HttpResponse:
     if not omit_rewrite:
         api_response = oppinion_remover.remove_opinions(opinionated_sentences)
         if api_response:
-            logging.info(f"Used tokens: {api_response['usage']['total_tokens']}")
-            deopinionated_sentences = postprocess.process_api_response(api_response)
+            logging.info(
+                f"Used tokens: {api_response['usage']['total_tokens']}"
+            )
+            deopinionated_sentences = postprocess.process_api_response(
+                api_response
+            )
             deopinionated_indexed = postprocess.format_to_indexed_dict(
                 deopinionated_sentences, EMPTY_TOKEN, opinionated.tolist()
             )

@@ -26,7 +26,9 @@ def separate_by_condition(
 def separate_by_total_length(
     sentences: IndexedSentences, length: int
 ) -> tuple[IndexedSentences, IndexedSentences]:
-    return separate_by_condition(sentences, lambda sentence: len(sentence) > length)
+    return separate_by_condition(
+        sentences, lambda sentence: len(sentence) > length
+    )
 
 
 def separate_by_word_count(
