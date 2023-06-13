@@ -39,12 +39,11 @@ jobs:
         run: |
           sphinx-apidoc -o ./docs/ ./newsfuse/
           sphinx-build -b html ./docs/ ./docs/_build
-          ls -la ./docs/_build
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: ./docs/_build
+          folder: ./newsfuse-func/docs/_build
           branch: gh-pages
           token: ${{ secrets.GITHUB_TOKEN }}
           clean: true
