@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>newsfuse package &mdash; NewsFuse  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            NewsFuse
+          </a>
+              <div class="version">
+                0.1.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">newsfuse package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-newsfuse.deopinionize">newsfuse.deopinionize module</a><ul>
+<li><a class="reference internal" href="#newsfuse.deopinionize.OpinionRemover"><code class="docutils literal notranslate"><span class="pre">OpinionRemover</span></code></a><ul>
+<li><a class="reference internal" href="#newsfuse.deopinionize.OpinionRemover.remove_opinions"><code class="docutils literal notranslate"><span class="pre">OpinionRemover.remove_opinions()</span></code></a></li>
+<li><a class="reference internal" href="#newsfuse.deopinionize.OpinionRemover.send_request"><code class="docutils literal notranslate"><span class="pre">OpinionRemover.send_request()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#newsfuse.deopinionize.merge_sentences"><code class="docutils literal notranslate"><span class="pre">merge_sentences()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-newsfuse.exceptions">newsfuse.exceptions module</a><ul>
+<li><a class="reference internal" href="#newsfuse.exceptions.FailedToLoadModelException"><code class="docutils literal notranslate"><span class="pre">FailedToLoadModelException</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-newsfuse.model">newsfuse.model module</a><ul>
+<li><a class="reference internal" href="#newsfuse.model.load_and_compile_from_path"><code class="docutils literal notranslate"><span class="pre">load_and_compile_from_path()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-newsfuse.postprocess">newsfuse.postprocess module</a><ul>
+<li><a class="reference internal" href="#newsfuse.postprocess.format_to_indexed_dict"><code class="docutils literal notranslate"><span class="pre">format_to_indexed_dict()</span></code></a></li>
+<li><a class="reference internal" href="#newsfuse.postprocess.process_api_response"><code class="docutils literal notranslate"><span class="pre">process_api_response()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-newsfuse.preprocess">newsfuse.preprocess module</a><ul>
+<li><a class="reference internal" href="#newsfuse.preprocess.preprocess_corpus"><code class="docutils literal notranslate"><span class="pre">preprocess_corpus()</span></code></a></li>
+<li><a class="reference internal" href="#newsfuse.preprocess.separate_by_condition"><code class="docutils literal notranslate"><span class="pre">separate_by_condition()</span></code></a></li>
+<li><a class="reference internal" href="#newsfuse.preprocess.separate_by_total_length"><code class="docutils literal notranslate"><span class="pre">separate_by_total_length()</span></code></a></li>
+<li><a class="reference internal" href="#newsfuse.preprocess.separate_by_word_count"><code class="docutils literal notranslate"><span class="pre">separate_by_word_count()</span></code></a></li>
+<li><a class="reference internal" href="#newsfuse.preprocess.split_to_sentences"><code class="docutils literal notranslate"><span class="pre">split_to_sentences()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-newsfuse.types">newsfuse.types module</a></li>
+<li><a class="reference internal" href="#module-newsfuse">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">NewsFuse</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">newsfuse package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/newsfuse.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="newsfuse-package">
+<h1>newsfuse package<a class="headerlink" href="#newsfuse-package" title="Permalink to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-newsfuse.deopinionize">
+<span id="newsfuse-deopinionize-module"></span><h2>newsfuse.deopinionize module<a class="headerlink" href="#module-newsfuse.deopinionize" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="newsfuse.deopinionize.OpinionRemover">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">newsfuse.deopinionize.</span></span><span class="sig-name descname"><span class="pre">OpinionRemover</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">translation_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'gpt-3.5-turbo'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#newsfuse.deopinionize.OpinionRemover" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class for removing opinions from a text using OpenAI’s API.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="newsfuse.deopinionize.OpinionRemover.remove_opinions">
+<span class="sig-name descname"><span class="pre">remove_opinions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sentences</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#newsfuse.deopinionize.OpinionRemover.remove_opinions" title="Permalink to this definition"></a></dt>
+<dd><p>Removes opinions from a list of sentences.
+If the request fails, returns None.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sentences</strong> – List of sentences to remove opinions from</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Deopinionized sentences</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="newsfuse.deopinionize.OpinionRemover.send_request">
+<span class="sig-name descname"><span class="pre">send_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#newsfuse.deopinionize.OpinionRemover.send_request" title="Permalink to this definition"></a></dt>
+<dd><p>Sends a deopnionize request to OpenAI API.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>content</strong> – text to be deopinionized sentence by sentence</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>raw response from OpenAI API</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="newsfuse.deopinionize.merge_sentences">
+<span class="sig-prename descclassname"><span class="pre">newsfuse.deopinionize.</span></span><span class="sig-name descname"><span class="pre">merge_sentences</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sentences</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#newsfuse.deopinionize.merge_sentences" title="Permalink to this definition"></a></dt>
+<dd><p>Merges a list of sentences into a single string.
+Uses a newline character as a separator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sentences</strong> – List of sentences to merge</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Merged sentences</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-newsfuse.exceptions">
+<span id="newsfuse-exceptions-module"></span><h2>newsfuse.exceptions module<a class="headerlink" href="#module-newsfuse.exceptions" title="Permalink to this heading"></a></h2>
+<dl class="py exception">
+<dt class="sig sig-object py" id="newsfuse.exceptions.FailedToLoadModelException">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">newsfuse.exceptions.</span></span><span class="sig-name descname"><span class="pre">FailedToLoadModelException</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#newsfuse.exceptions.FailedToLoadModelException" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Raised when a model fails to load</p>
+</dd></dl>
+
+</section>
+<section id="module-newsfuse.model">
+<span id="newsfuse-model-module"></span><h2>newsfuse.model module<a class="headerlink" href="#module-newsfuse.model" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="newsfuse.model.load_and_compile_from_path">
+<span class="sig-prename descclassname"><span class="pre">newsfuse.model.</span></span><span class="sig-name descname"><span class="pre">load_and_compile_from_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compile_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Model</span></span></span><a class="headerlink" href="#newsfuse.model.load_and_compile_from_path" title="Permalink to this definition"></a></dt>
+<dd><p>Loads a model from a path and compiles it with the given config.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> – path to the model</p></li>
+<li><p><strong>compile_config</strong> – config to compile the model with</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#newsfuse.exceptions.FailedToLoadModelException" title="newsfuse.exceptions.FailedToLoadModelException"><strong>FailedToLoadModelException</strong></a> – if the model fails to load</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>the loaded and compiled model</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-newsfuse.postprocess">
+<span id="newsfuse-postprocess-module"></span><h2>newsfuse.postprocess module<a class="headerlink" href="#module-newsfuse.postprocess" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="newsfuse.postprocess.format_to_indexed_dict">
+<span class="sig-prename descclassname"><span class="pre">newsfuse.postprocess.</span></span><span class="sig-name descname"><span class="pre">format_to_indexed_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">processed_api_response</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">empty_token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opinionated_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#newsfuse.postprocess.format_to_indexed_dict" title="Permalink to this definition"></a></dt>
+<dd><p>Formats the processed response from OpenAI API into a
+dictionary of sentences with their original indices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>processed_api_response</strong> – list of sentences from OpenAI API</p></li>
+<li><p><strong>empty_token</strong> – token to represent an empty sentence</p></li>
+<li><p><strong>opinionated_indices</strong> – indices of opinionated sentences</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>dictionary of sentences with their original indices</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="newsfuse.postprocess.process_api_response">
+<span class="sig-prename descclassname"><span class="pre">newsfuse.postprocess.</span></span><span class="sig-name descname"><span class="pre">process_api_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#newsfuse.postprocess.process_api_response" title="Permalink to this definition"></a></dt>
+<dd><p>Processes the raw response from OpenAI API into a list of sentences.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>response</strong> – raw response from OpenAI API</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>list of sentences</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-newsfuse.preprocess">
+<span id="newsfuse-preprocess-module"></span><h2>newsfuse.preprocess module<a class="headerlink" href="#module-newsfuse.preprocess" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="newsfuse.preprocess.preprocess_corpus">
+<span class="sig-prename descclassname"><span class="pre">newsfuse.preprocess.</span></span><span class="sig-name descname"><span class="pre">preprocess_corpus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">corpus</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">word_count_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#newsfuse.preprocess.preprocess_corpus" title="Permalink to this definition"></a></dt>
+<dd><p>Preprocesses a corpus by splitting it into sentences and separating
+them into invalid, valid, and all sentences based on length and word count.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>corpus</strong> – corpus to be preprocessed</p></li>
+<li><p><strong>length_threshold</strong> – lower limit for sentence length, defaults to 0</p></li>
+<li><p><strong>word_count_threshold</strong> – lower limit for sentence word count,
+defaults to 0</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple of dictionaries of invalid, valid, and all sentences</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="newsfuse.preprocess.separate_by_condition">
+<span class="sig-prename descclassname"><span class="pre">newsfuse.preprocess.</span></span><span class="sig-name descname"><span class="pre">separate_by_condition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sentences</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invalidating_condition</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#newsfuse.preprocess.separate_by_condition" title="Permalink to this definition"></a></dt>
+<dd><p>Separates a dictionary of sentences into two dictionaries:
+one with sentences that satisfy the condition and one with sentences that
+do not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sentences</strong> – dictionary of indexed sentences</p></li>
+<li><p><strong>invalidating_condition</strong> – condition to be satisfied</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple of dictionaries of sentences that satisfy the condition and
+sentences that do not</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="newsfuse.preprocess.separate_by_total_length">
+<span class="sig-prename descclassname"><span class="pre">newsfuse.preprocess.</span></span><span class="sig-name descname"><span class="pre">separate_by_total_length</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sentences</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#newsfuse.preprocess.separate_by_total_length" title="Permalink to this definition"></a></dt>
+<dd><p>Separates a dictionary of sentences into two dictionaries:
+one with sentences that have a total length greater than the given length
+and one with sentences that do not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sentences</strong> – dictionary of indexed sentences</p></li>
+<li><p><strong>length</strong> – length to be compared against</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple of dictionaries of sentences that satisfy the condition and
+sentences that do not</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="newsfuse.preprocess.separate_by_word_count">
+<span class="sig-prename descclassname"><span class="pre">newsfuse.preprocess.</span></span><span class="sig-name descname"><span class="pre">separate_by_word_count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sentences</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">word_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#newsfuse.preprocess.separate_by_word_count" title="Permalink to this definition"></a></dt>
+<dd><p>Separates a dictionary of sentences into two dictionaries:
+one with sentences that have a word count greater than the given word count
+and one with sentences that do not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sentences</strong> – dictionary of indexed sentences</p></li>
+<li><p><strong>word_count</strong> – word count to be compared against</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple of dictionaries of sentences that satisfy the condition and
+sentences that do not</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="newsfuse.preprocess.split_to_sentences">
+<span class="sig-prename descclassname"><span class="pre">newsfuse.preprocess.</span></span><span class="sig-name descname"><span class="pre">split_to_sentences</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#newsfuse.preprocess.split_to_sentences" title="Permalink to this definition"></a></dt>
+<dd><p>Splits a text into sentences using NLTK.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>text</strong> – text corpus to be split</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>list of sentences</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-newsfuse.types">
+<span id="newsfuse-types-module"></span><h2>newsfuse.types module<a class="headerlink" href="#module-newsfuse.types" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-newsfuse">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-newsfuse" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,61 @@
+newsfuse package
+================
+
+Submodules
+----------
+
+newsfuse.deopinionize module
+----------------------------
+
+.. automodule:: newsfuse.deopinionize
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+newsfuse.exceptions module
+--------------------------
+
+.. automodule:: newsfuse.exceptions
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+newsfuse.model module
+---------------------
+
+.. automodule:: newsfuse.model
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+newsfuse.postprocess module
+---------------------------
+
+.. automodule:: newsfuse.postprocess
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+newsfuse.preprocess module
+--------------------------
+
+.. automodule:: newsfuse.preprocess
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+newsfuse.types module
+---------------------
+
+.. automodule:: newsfuse.types
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: newsfuse
+   :members:
+   :undoc-members:
+   :show-inheritance:

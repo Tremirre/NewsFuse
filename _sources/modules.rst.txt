@@ -1,0 +1,7 @@
+newsfuse
+========
+
+.. toctree::
+   :maxdepth: 4
+
+   newsfuse
