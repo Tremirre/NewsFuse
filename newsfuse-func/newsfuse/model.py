@@ -14,6 +14,14 @@ assert tf_text  # silence unused import warning
 def load_and_compile_from_path(
     path: Path | str, compile_config: dict[str, Any]
 ) -> tf.keras.Model:
+    """
+    Loads a model from a path and compiles it with the given config.
+
+    :param path: path to the model
+    :param compile_config: config to compile the model with
+    :raises FailedToLoadModelException: if the model fails to load
+    :return: the loaded and compiled model
+    """
     try:
         model: tf.keras.Model = tf.keras.models.load_model(
             path, compile=False
