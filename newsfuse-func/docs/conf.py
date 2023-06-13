@@ -22,4 +22,4 @@ html_theme = "sphinx_rtd_theme"
 
 # -- Source file settings ----------------------------------------------------
 
-master_doc = "newsfuse"
+master_doc = "index"
