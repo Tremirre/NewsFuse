@@ -1,5 +1,7 @@
-import tensorflow as tf
-import tensorflow_text as tf_text  # required for loading model
+import tensorflow as tf  # type: ignore
+
+# required for loading model
+import tensorflow_text as tf_text  # type: ignore
 
 from pathlib import Path
 from typing import Any

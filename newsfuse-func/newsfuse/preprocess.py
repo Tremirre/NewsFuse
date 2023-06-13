@@ -1,4 +1,4 @@
-import nltk
+import nltk  # type: ignore
 
 from typing import Callable
 
