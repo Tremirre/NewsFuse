@@ -5,3 +5,6 @@ black
 wandb
 ipython
 ipykernel
+
+# types for mypy
+types-PyYAML
