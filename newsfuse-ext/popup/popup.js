@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
     const btnGrabber = document.getElementById("btn-text-grabber");
-    const btnDebug = document.getElementById("btn-debug-mode");
     const btnParse = document.getElementById("btn-parse");
     const btnHighlight = document.getElementById("btn-highlight");
     const chkTranslation = document.getElementById("chk-translation-mode");
@@ -45,11 +44,7 @@ document.addEventListener("DOMContentLoaded", function () {
             sendMessage("showHighlights");
         }
     });
-
-    btnDebug.addEventListener("click", function () {
-        sendMessage("debug");
-    });
-
+    
     btnParse.addEventListener("click", function () {
         sendMessage("parse");
     });
