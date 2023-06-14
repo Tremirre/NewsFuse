@@ -1,19 +1,35 @@
-import tensorflow as tf
-import tensorflow_text as tf_text  # required for loading model
+import tensorflow as tf  # type: ignore
+
+# required for loading model
+import tensorflow_text as tf_text  # type: ignore
 
 from pathlib import Path
 from typing import Any
 
 from .exceptions import FailedToLoadModelException
 
+assert tf_text  # silence unused import warning
+
 
 def load_and_compile_from_path(
     path: Path | str, compile_config: dict[str, Any]
 ) -> tf.keras.Model:
+    """
+    Loads a model from a path and compiles it with the given config.
+
+    :param path: path to the model
+    :param compile_config: config to compile the model with
+    :raises FailedToLoadModelException: if the model fails to load
+    :return: the loaded and compiled model
+    """
     try:
-        model: tf.keras.Model = tf.keras.models.load_model(path, compile=False)  # type: ignore
+        model: tf.keras.Model = tf.keras.models.load_model(
+            path, compile=False
+        )  # type: ignore
     except OSError:
-        raise FailedToLoadModelException("model at " + str(path) + " does not exist")
+        raise FailedToLoadModelException(
+            "model at " + str(path) + " does not exist"
+        )
     except tf.errors.NotFoundError:  # type: ignore
         raise FailedToLoadModelException(
             "model at " + str(path) + " is not a valid model"

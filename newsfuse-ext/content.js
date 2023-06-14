@@ -1,9 +1,19 @@
 console.log("NF: content.js loaded")
 var highlightedElement = null;
-var stayInPickerMode = false;
 var translationMode = false;
+var grabberMode = false;
+var highlightHidden = false;
 
-const TRANSLATED_COLOR = "rgba(0, 0, 255, 0.4)";
+const ORIGINAL_CLASS = "nf-original-sentence";
+const TRANSLATED_CLASS = "nf-translated-sentence";
+const HIGHLIGHTED_CLASS = "nf-highlighted-sentence";
+const ELEMENT_VISITED_CLASS = "nf-visited-element";
+const DEHIGHLIGHETED_CLASS = "nf-style-hidden";
+
+const REPLACEMENT_MAP = {
+    "\xa0": " ",
+}
+
 function determinePredictionColor(prediction) {
     if (prediction < 0.5) {
         return `rgba(0, 255, 0, ${0.5 - prediction})`;
@@ -19,12 +29,40 @@ function mouseoverCallback(event) {
     highlightedElement.classList.add("nf-hovered-item");
 }
 
+function normalizeSentence(sentence) {
+    var normalized = sentence;
+    for (const [key, value] of Object.entries(REPLACEMENT_MAP)) {
+        normalized = normalized.replace(key, value);
+    }
+    return normalized;
+}
+
+function findMatch(sentence, text) {
+    const sentenceNormalized = normalizeSentence(sentence);
+    const firstWord = sentenceNormalized.split(" ")[0];
+    const lastWord = sentenceNormalized.split(" ").slice(-1)[0].replace('.', '\\.');
+
+    const sentenceMidLength = sentence.length - firstWord.length - lastWord.length;
+    const regex = new RegExp(`${firstWord}.{${sentenceMidLength},}${lastWord}`, 'g');
+    var match = regex.exec(text);
+
+    if (match !== null) {
+        return match;
+    }
+
+    if (lastWord.slice(-1)[0] === ".") {
+        // Retry in case the sentence ends with a closing tag between last word and period
+        const regex = new RegExp(`${firstWord}.{${sentenceMidLength},}>\\.`, 'g');
+        match = regex.exec(text);
+        return match;
+    }
+
+    return null;
+}
+
 function findBoundingIndices(sentence, element, fromIndex = 0) {
-    const firstWord = sentence.split(" ")[0];
-    const lastWord = sentence.split(" ").slice(-1)[0].replace('.', '\\.');
-    const regex = new RegExp(`${firstWord}\\b.*\\b${lastWord}`, 'g');
-    const text = fromIndex === 0 ? element.innerHTML : element.innerHTML.substring(fromIndex + 1);
-    const match = regex.exec(text);
+    const text = element.innerHTML.substring(fromIndex);
+    var match = findMatch(sentence, text);
     if (match === null) {
         return null;
     }
@@ -40,7 +78,11 @@ function showClassification(classification, sentences, element) {
     for (const [index, sentence] of sentences.entries()) {
         const sentencePrediction = classification[index];
         const color = determinePredictionColor(sentencePrediction);
-        const openTag = `<span class="nf-highlighted-sentence" style="background-color: ${color};"}>`;
+        var tagClass = HIGHLIGHTED_CLASS
+        if (highlightHidden) {
+            tagClass += " " + DEHIGHLIGHETED_CLASS;
+        }
+        const openTag = `<span class="${tagClass}" style="background-color: ${color};"}>`;
         const closeTag = "</span>";
         const replacement = `${openTag}${sentence}${closeTag}`;
         if (element.innerHTML.includes(sentence)) {
@@ -64,28 +106,38 @@ function translateContent(translations, sentences, element) {
     if (translations === null) return;
     var firstIndex = 0;
     var lastIndex = 0;
+    var tagOffset = 0;
     for (const [index, translated] of Object.entries(translations)) {
         const sentence = sentences[index];
-        const openTag = `<span class="nf-translated-sentence" style="background-color: ${TRANSLATED_COLOR};"}>`;
-        const closeTag = "</span>";
-        const replacement = `${openTag}${translated}${closeTag}`;
+        var tagClass = TRANSLATED_CLASS;
+        if (highlightHidden) {
+            tagClass += " " + DEHIGHLIGHETED_CLASS;
+        }
+        const openTagOriginal = `<span class="${ORIGINAL_CLASS}">`;
+        const closeTagOriginal = "</span>";
+        const openTagTranslated = `<span class="${tagClass}">`;
+        const closeTagTranslated = "</span>";
+        const replacement = `${openTagOriginal}${sentence}${closeTagOriginal}${openTagTranslated}${translated}${closeTagTranslated}`;
         if (element.innerHTML.includes(sentence)) {
             element.innerHTML = element.innerHTML.replace(sentence, replacement);
             continue;
         }
-        const boundingIndices = findBoundingIndices(sentence, element, lastIndex);
+        const boundingIndices = findBoundingIndices(sentence, element, lastIndex + tagOffset);
         if (boundingIndices === null) {
             continue;
         }
         [firstIndex, lastIndex] = boundingIndices;
         const textBefore = element.innerHTML.substring(0, firstIndex);
         const textAfter = element.innerHTML.substring(lastIndex + 1);
+        const lengthBefore = element.innerHTML.length;
         element.innerHTML = `${textBefore}${replacement}${textAfter}`
+        tagOffset = element.innerHTML.length - lengthBefore;
     }
 }
 
 function stopPickerMode() {
     console.log("NF: stopPickerMode");
+    grabberMode = false;
     document.removeEventListener("mouseover", mouseoverCallback);
     document.removeEventListener("click", clickPickerCallback);
     if (highlightedElement) {
@@ -95,6 +147,10 @@ function stopPickerMode() {
 }
 
 async function processElement(element) {
+    if (element.classList.contains(ELEMENT_VISITED_CLASS)) {
+        console.warn("NF: Element already visited");
+        return;
+    }
     try {
         const response = await new Promise((resolve, reject) => {
             const action = translationMode ? 'translate' : 'classify';
@@ -114,7 +170,8 @@ async function processElement(element) {
         var sentences = response.sentences;
         console.log("NF: Classification:", classification);
         console.log("NF: Sentences:", sentences);
-        if (translationMode) {
+        element.classList.add(ELEMENT_VISITED_CLASS);
+        if (translationMode && response.translations) {
             var translations = response.translations;
             console.log("NF: Translations:", translations);
             translateContent(translations, sentences, element);
@@ -142,6 +199,7 @@ function clickPickerCallback(event) {
 }
 
 function startPickerMode() {
+    grabberMode = true;
     document.addEventListener("mouseover", mouseoverCallback);
     document.addEventListener("click", clickPickerCallback);
 }
@@ -162,6 +220,30 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         } else if (message.message === "translateOff") {
             translationMode = false;
             console.log("NF: Translation mode disabled");
+        } else if (message.message === "popupLoaded") {
+            sendResponse(
+                { 
+                    translationMode: translationMode, 
+                    grabberMode: grabberMode,
+                    highlightHidden: highlightHidden 
+                }
+            );
+        } else if (message.message === "hideHighlights") {
+            document.querySelectorAll("." + HIGHLIGHTED_CLASS).forEach((element) => {
+                element.classList.add(DEHIGHLIGHETED_CLASS);
+            });
+            document.querySelectorAll("." + TRANSLATED_CLASS).forEach((element) => {
+                    element.classList.add(DEHIGHLIGHETED_CLASS);
+            });
+            document.querySelectorAll("." + ORIGINAL_CLASS).forEach((element) => {
+                element.classList.add(DEHIGHLIGHETED_CLASS);
+            });
+            highlightHidden = true;
+        } else if (message.message === "showHighlights") {
+            document.querySelectorAll("." + DEHIGHLIGHETED_CLASS).forEach((element) => {
+                element.classList.remove(DEHIGHLIGHETED_CLASS);
+            });
+            highlightHidden = false;
         }
     }
 });
