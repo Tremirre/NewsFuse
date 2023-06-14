@@ -3,6 +3,8 @@ import tensorflow as tf  # type: ignore
 # required for loading model
 import tensorflow_text as tf_text  # type: ignore
 
+import tensorflow_hub as tf_hub  # type: ignore
+
 from pathlib import Path
 from typing import Any
 
@@ -24,7 +26,9 @@ def load_and_compile_from_path(
     """
     try:
         model: tf.keras.Model = tf.keras.models.load_model(
-            path, compile=False
+            path,
+            custom_objects={"KerasLayer": tf_hub.KerasLayer},
+            compile=False,
         )  # type: ignore
     except OSError:
         raise FailedToLoadModelException(
