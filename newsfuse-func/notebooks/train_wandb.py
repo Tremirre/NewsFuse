@@ -7,10 +7,11 @@ from lime.lime_text import LimeTextExplainer
 import numpy as np
 
 class Trainer():
-    def __init__(self, config, model, dataset) -> None:
+    def __init__(self, config, model, dataset, name) -> None:
         self.config = config
         self.model = model
         self.dataset = dataset
+        self.name = name
         self.get_dataset_partitions_tf(dataset, config["datasize"])
         self.init_wandb()
 
@@ -18,7 +19,8 @@ class Trainer():
         wandb.init(
             project="news-fuse",
             config=self.config,
-            settings=wandb.Settings(code_dir="...")
+            settings=wandb.Settings(code_dir="..."),
+            name = self.name,
         )
         wandb.log(self.config)
 
@@ -29,9 +31,9 @@ class Trainer():
         train_size = int(train_split * ds_size)
         val_size = int(val_split * ds_size)
         
-        self.train_ds = ds.take(train_size).batch(32)
-        self.val_ds = ds.skip(train_size).take(val_size).batch(32)
-        self.test_ds = ds.skip(train_size).skip(val_size).batch(32)
+        self.train_ds = ds.take(train_size).batch(self.config["batch_size"])
+        self.val_ds = ds.skip(train_size).take(val_size).batch(self.config["batch_size"])
+        self.test_ds = ds.skip(train_size).skip(val_size).batch(self.config["batch_size"])
         
 
     def compile_model(self):
@@ -64,9 +66,11 @@ class Trainer():
                    "test binary_accuracy": test_data[1]})
         return test_data
     
-    def predict_model(self):
-        return self.model.predict(self.test_ds,
-            callbacks=[wandb.keras.WandbCallback()])
+    def predict_model(self, text, label, log = True):
+        prediction = self.model.predict([text])
+        if log:
+            wandb.log({label: text, "model_prediction": prediction})
+        return prediction
 
     def save_model(self):
         self.model.save(os.path.join(wandb.run.dir, "model.h5"))
@@ -75,13 +79,13 @@ class Trainer():
         prob = self.model.predict([text])
         return np.hstack([1 - prob, prob])
 
-    def explain_prediction(self, text, log = True):
+    def explain_prediction(self, text, label, log = True):
         explainer = LimeTextExplainer(class_names=["Non-biased", "Biased"])
         with tf.device("/cpu:0"):
             explanation = explainer.explain_instance(text, self.get_probabilities, num_features=10)
             if log:
                 data = [[label, val] for (label, val) in explanation.as_list()]
                 table = wandb.Table(data=data, columns = ["label", "value"])
-                wandb.log({"my_bar_chart_id" : wandb.plot.bar(table, "label", "value", title="Custom Bar Chart")})
+                wandb.log({label : wandb.plot.bar(table, "label", "value", title=label)})
             return explanation
 
