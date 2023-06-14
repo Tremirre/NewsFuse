@@ -32,6 +32,6 @@ jobs:
           app-name: 'news-fuse'
           slot-name: 'Production'
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_D63578CC669E4E69B6ADD1D6349B346D }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_EA2EDD3AC5FC4D6490C33833B0D5C2F8 }}
           scm-do-build-during-deployment: true
           enable-oryx-build: true
