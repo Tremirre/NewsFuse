@@ -1,4 +1,4 @@
-# NewsFuse - AI powered detector of biased/opinionated content in news articles!
+# NewsFuse - AI powered detector of biased/opinionated content in news articles
 
 ![nf-icon](newsfuse-ext/icons/64.png)
 
@@ -68,6 +68,8 @@ After the classification, the Flask application sends the result back to the chr
 
 The translation mode is implemented by replacing the biased sentences with their unbiased counterparts using OpenAI's [GPT-3.5-turbo](https://openai.com/blog/better-language-models/) model via API,yet due to restrictions of the model the quality of translations varies heavily.
 
+The flask app is intended to be deployed as Azure Function, yet it can be run locally as well.
+
 ## Controls
 
 ![controls](readme_pictures/nf-client.png)
@@ -85,3 +87,55 @@ The extension has the following controls:
 - The extension does not yet support direct quotes, so they are being parsed as any other sentence.
 - Reported speech is sometimes being incorrectly classified as biased.
 - Highlighting engine has some issues with highlighting sentences that contain HTML tags and might omit some of the sentences or highlight them incorrectly.
+
+## Running locally
+
+### Prerequisites
+
+- Python 3.10+
+- Azure Functions Core Tools
+- Azurite
+
+### Steps
+
+1. Clone the repository
+   ```bash
+    git clone https://github.com/Tremirre/NewsFuse.git
+   ```
+2. Open the repository in VS Code
+   ```bash
+    cd NewsFuse
+    code .
+   ```
+3. Create and activate virtual environment
+   ```bash
+    python -m venv .venv
+    .venv\Scripts\activate
+   ```
+4. Install dependencies
+   ```bash
+    pip install -r requirements.txt
+   ```
+5. Run Azurite
+
+   ```bash
+    azurite --silent
+   ```
+
+6. Run the Flask application
+
+   ```bash
+    func host start
+   ```
+
+7. Add the extension to Chrome
+
+   - Open Chrome
+   - Go to `chrome://extensions/`
+   - Enable `Developer mode`
+   - Click `Load unpacked`
+   - Select `NewsFuse/newsfuse-ext` folder
+
+8. Open any news article and click `Parse Paragraphs` button
+
+9. Enjoy!
