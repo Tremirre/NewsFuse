@@ -8,10 +8,9 @@ import numpy as np
 import yaml
 import dotenv
 
-from newsfuse import preprocess, postprocess
+from newsfuse import preprocess, postprocess, deopinionize
 from newsfuse.model import load_and_compile_from_path
 from newsfuse.exceptions import FailedToLoadModelException
-from newsfuse.deopinionize import OpinionRemover
 
 dotenv.load_dotenv()
 
@@ -22,7 +21,10 @@ MODEL_PATH = os.environ.get("MODEL_PATH", fixed_model_path)
 DECISION_THRESHOLD = float(os.environ.get("DECISION_THRESHOLD", 0.5))
 LENGTH_THRESHOLD = int(os.environ.get("LENGTH_THRESHOLD", 5))
 WORD_COUNT_THRESHOLD = int(os.environ.get("WORD_COUNT_THRESHOLD", 2))
-OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
+API_USED = os.environ["API_USED"]
+API_KEY = os.environ["API_KEY"]
+
+assert API_USED in ["openai", "google"]
 
 with open("config.yaml") as f:
     CONFIG = yaml.safe_load(f)
@@ -45,12 +47,17 @@ try:
         },
     )
     predictor = MODEL.predict  # noqa: F811
+    logging.info(f"Using model from {MODEL_PATH} for classification.")
 except FailedToLoadModelException as e:
     logging.error(
         "Failed to load model: " + str(e) + ".\n Using random predictor."
     )
 
-oppinion_remover = OpinionRemover(OPENAI_API_KEY, TASK)
+if API_USED == "openai":
+    oppinion_remover = deopinionize.OpenAIOpinionRemover(API_KEY, TASK)
+else:
+    oppinion_remover = deopinionize.GoogleOpinionRemover(API_KEY, TASK)
+logging.info(f"Using {API_USED} API for deopinionization.")
 app = func.FunctionApp(http_auth_level=func.AuthLevel.FUNCTION)
 
 

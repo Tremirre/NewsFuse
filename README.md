@@ -107,8 +107,9 @@ The extension has the following controls:
     cd NewsFuse
     code .
    ```
-3. Create and activate virtual environment
+3. Create and activate virtual environment in the newsfuse-func directory
    ```bash
+    cd newsfuse-func
     python -m venv .venv
     .venv\Scripts\activate
    ```
