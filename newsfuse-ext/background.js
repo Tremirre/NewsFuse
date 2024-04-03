@@ -1,4 +1,4 @@
-const NEWSFUSE_FUNC_URL = "http://localhost:7071/api/newsfusebackend"
+const NEWSFUSE_FUNC_URL = "http://127.0.0.1:8000/"
 
 function fetchToNewsFuseBackend(requestBody, sendResponse) {
     fetch(NEWSFUSE_FUNC_URL, {

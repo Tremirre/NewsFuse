@@ -1,8 +1,13 @@
 import abc
+import itertools
 import logging
+import typing
 
 import openai
+import openai.types.chat
 import google.generativeai as genai
+
+ChatCompletion = openai.types.chat.chat_completion.ChatCompletion
 
 
 def merge_sentences(sentences: list[str]) -> str:
@@ -40,7 +45,7 @@ class OpinionRemover(abc.ABC):
         """
         pass
 
-    def remove_opinions(self, sentences: list[str]) -> dict | None:
+    def remove_opinions(self, sentences: list[str]) -> list[str]:
         """
         Removes opinions from a list of sentences.
         If the request fails, returns None.
@@ -52,18 +57,29 @@ class OpinionRemover(abc.ABC):
             return None
         corpus = merge_sentences(sentences)
         try:
-            return self.send_request(corpus)
+            response = self.send_request(corpus)
+            return self.process_api_response(response)
         except Exception as e:
             logging.error("Failed to send request to API consumer: " + str(e))
-            return None
+            return []
 
     @abc.abstractmethod
-    def send_request(self, content: str) -> dict:
+    def send_request(self, content: str) -> typing.Any:
         """
         Sends a deopnionize request to the API.
 
         :param content: text to be deopinionized sentence by sentence
         :return: raw response from the API
+        """
+        pass
+
+    @abc.abstractmethod
+    def process_api_response(self, response: typing.Any) -> list[str]:
+        """
+        Processes the raw response from the API into a list of sentences.
+
+        :param response: raw response from the API
+        :return: list of sentences
         """
         pass
 
@@ -102,6 +118,9 @@ class GoogleOpinionRemover(OpinionRemover):
         src_content = self.task + "\n\n" + content
         return self.initialized_model.generate_content(src_content)
 
+    def process_api_response(self, response: typing.Any) -> list[str]:
+        return super().process_api_response(response)
+
 
 class OpenAIOpinionRemover(OpinionRemover):
     """
@@ -130,14 +149,14 @@ class OpenAIOpinionRemover(OpinionRemover):
         """
         openai.api_key = api_key
 
-    def send_request(self, content: str) -> dict:
+    def send_request(self, content: str) -> ChatCompletion:
         """
         Sends a deopnionize request to OpenAI API.
 
         :param content: text to be deopinionized sentence by sentence
         :return: raw response from OpenAI API
         """
-        return openai.ChatCompletion.create(  # type: ignore
+        return openai.chat.completions.create(
             model=self.model,
             messages=[
                 {
@@ -147,3 +166,16 @@ class OpenAIOpinionRemover(OpinionRemover):
                 {"role": "user", "content": content},
             ],
         )
+
+    def process_api_response(self, response: ChatCompletion) -> list[str]:
+        """
+        Processes the raw response from the API into a list of sentences.
+
+        :param response: raw response from the API
+        :return: list of sentences
+        """
+        return [
+            sentence
+            for choice in response.choices
+            for sentence in choice.message.content.split("\n")
+        ]

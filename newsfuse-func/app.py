@@ -1,5 +1,4 @@
 import os
-import azure.functions as func
 import json
 import logging
 import pathlib
@@ -7,12 +6,21 @@ import pathlib
 import numpy as np
 import yaml
 import dotenv
+import fastapi
 
 from newsfuse import preprocess, postprocess, deopinionize
+
+import tensorflow as tf  # type: ignore
+
 from newsfuse.model import load_and_compile_from_path
 from newsfuse.exceptions import FailedToLoadModelException
 
 dotenv.load_dotenv()
+
+logging.basicConfig(level=logging.INFO)
+handler = logging.StreamHandler()
+handler.setFormatter(logging.Formatter("%(asctime)s - %(message)s"))
+logging.getLogger().addHandler(handler)
 
 fixed_model_path = (
     pathlib.Path(__file__) / ".." / "models" / "small_bert_model"
@@ -58,32 +66,23 @@ if API_USED == "openai":
 else:
     oppinion_remover = deopinionize.GoogleOpinionRemover(API_KEY, TASK)
 logging.info(f"Using {API_USED} API for deopinionization.")
-app = func.FunctionApp(http_auth_level=func.AuthLevel.FUNCTION)
+app = fastapi.FastAPI()
 
 
-@app.route(route="newsfusebackend")
-def newsfusebackend(req: func.HttpRequest) -> func.HttpResponse:
-    if req.method != "POST":
-        return func.HttpResponse(
-            "Only POST requests are allowed",
-            status_code=405,  # Method Not Allowed
-        )
+@app.post("/")
+async def newsfusebackend(
+    request: fastapi.Request, response: fastapi.Response
+) -> dict:
     try:
-        req_body = req.get_json()
+        req_body = await request.json()
     except ValueError:
-        return func.HttpResponse(
-            json.dumps({"error": "Invalid request body"}),
-            status_code=400,
-            mimetype="application/json",
-        )
+        response.status_code = 400
+        return {"error": "Invalid request body"}
     corpus = req_body.get("corpus", "").strip()
     omit_rewrite = req_body.get("omitRewrite", False)
     if not corpus:
-        return func.HttpResponse(
-            json.dumps({"error": "Missing corpus in request body."}),
-            status_code=400,
-            mimetype="application/json",
-        )
+        response.status_code = 400
+        return {"error": "Missing corpus in request body."}
     invalid, valid, all_sentences = preprocess.preprocess_corpus(
         corpus, LENGTH_THRESHOLD, WORD_COUNT_THRESHOLD
     )
@@ -92,11 +91,8 @@ def newsfusebackend(req: func.HttpRequest) -> func.HttpResponse:
     logging.info(f"Valid sentences: {len(valid)}")
 
     if not valid:
-        return func.HttpResponse(
-            json.dumps({"error": "No valid sentences found."}),
-            status_code=400,
-            mimetype="application/json",
-        )
+        response.status_code = 400
+        return {"error": "No valid sentences in the corpus."}
 
     valid_sentences = list(valid.values())
     predictions = predictor(valid_sentences).flatten()
@@ -109,14 +105,10 @@ def newsfusebackend(req: func.HttpRequest) -> func.HttpResponse:
 
     deopinionated_indexed = {}
     if not omit_rewrite:
-        api_response = oppinion_remover.remove_opinions(opinionated_sentences)
-        if api_response:
-            logging.info(
-                f"Used tokens: {api_response['usage']['total_tokens']}"
-            )
-            deopinionated_sentences = postprocess.process_api_response(
-                api_response
-            )
+        deopinionated_sentences = oppinion_remover.remove_opinions(
+            opinionated_sentences
+        )
+        if deopinionated_sentences:
             deopinionated_indexed = postprocess.format_to_indexed_dict(
                 deopinionated_sentences, EMPTY_TOKEN, opinionated.tolist()
             )
@@ -125,7 +117,4 @@ def newsfusebackend(req: func.HttpRequest) -> func.HttpResponse:
         "classification": classification,
         "translations": deopinionated_indexed,
     }
-    return func.HttpResponse(
-        json.dumps(result),
-        mimetype="application/json",
-    )
+    return result
