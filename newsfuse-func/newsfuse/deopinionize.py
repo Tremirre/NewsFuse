@@ -1,14 +1,16 @@
 import abc
 import logging
 import typing
+import os
+import json
 
 import openai
-import openai.types.chat
+from openai.types.chat.chat_completion import ChatCompletion
+
 import vertexai
 import vertexai.generative_models
 import vertexai.language_models
-
-ChatCompletion = openai.types.chat.chat_completion.ChatCompletion
+from vertexai.generative_models import GenerationResponse
 
 
 def merge_sentences(sentences: list[str]) -> str:
@@ -49,13 +51,13 @@ class OpinionRemover(abc.ABC):
     def remove_opinions(self, sentences: list[str]) -> list[str]:
         """
         Removes opinions from a list of sentences.
-        If the request fails, returns None.
+        If the request fails, returns an empty list.
 
         :param sentences: List of sentences to remove opinions from
         :return: Deopinionized sentences
         """
         if not sentences:
-            return None
+            return []
         corpus = merge_sentences(sentences)
         try:
             response = self.send_request(corpus)
@@ -103,16 +105,25 @@ class GoogleOpinionRemover(OpinionRemover):
             model
         )
 
-    def use_api_key(self, api_key: str) -> None:
+    def use_api_key(self, _: str) -> None:
         """
-        Sets the API key for the opinion remover.
+        Initializes the Google Gemini API with the credentials from the
+        GOOGLE_APPLICATION_CREDENTIALS environment variable.
 
-        :param api_key: API key to be used
+        :param _: unused API key
         """
-        # vertexai.configure(api_key=api_key)
-        vertexai.init()
+        app_credentials = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+        if not app_credentials:
+            raise ValueError("GOOGLE_APPLICATION_CREDENTIALS is not set.")
+        with open(app_credentials) as f:
+            credentials = json.load(f)
 
-    def send_request(self, content: str) -> dict:
+        vertexai.init(
+            project=credentials["project_id"],
+            location=os.environ["GOOGLE_LOCATION"],
+        )
+
+    def send_request(self, content: str) -> GenerationResponse:
         """
         Sends a deopnionize request to Google's API.
 
@@ -120,10 +131,17 @@ class GoogleOpinionRemover(OpinionRemover):
         :return: raw response from Google's API
         """
         src_content = self.task + "\n\n" + content
-        return self.initialized_model.generate_content(src_content)
+        response = self.initialized_model.generate_content(src_content)
+        return response  # type: ignore
 
-    def process_api_response(self, response: typing.Any) -> list[str]:
-        return super().process_api_response(response)
+    def process_api_response(self, response: GenerationResponse) -> list[str]:
+        """
+        Processes the raw response from the API into a list of sentences.
+
+        :param response: raw response from the API
+        :return: list of sentences
+        """
+        return [sentence for sentence in response.text.split("\n")]
 
 
 class OpenAIOpinionRemover(OpinionRemover):
@@ -151,6 +169,8 @@ class OpenAIOpinionRemover(OpinionRemover):
 
         :param api_key: API key to be used
         """
+        if not openai.api_key:
+            raise ValueError("OpenAI API key is not set.")
         openai.api_key = api_key
 
     def send_request(self, content: str) -> ChatCompletion:
@@ -181,5 +201,5 @@ class OpenAIOpinionRemover(OpinionRemover):
         return [
             sentence
             for choice in response.choices
-            for sentence in choice.message.content.split("\n")
+            for sentence in choice.message.content.split("\n")  # type: ignore
         ]

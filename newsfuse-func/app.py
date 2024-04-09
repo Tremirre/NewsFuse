@@ -1,5 +1,4 @@
 import os
-import json
 import logging
 import pathlib
 
@@ -9,9 +8,6 @@ import dotenv
 import fastapi
 
 from newsfuse import preprocess, postprocess, deopinionize
-
-import tensorflow as tf  # type: ignore
-
 from newsfuse.model import load_and_compile_from_path
 from newsfuse.exceptions import FailedToLoadModelException
 
@@ -30,9 +26,9 @@ DECISION_THRESHOLD = float(os.environ.get("DECISION_THRESHOLD", 0.5))
 LENGTH_THRESHOLD = int(os.environ.get("LENGTH_THRESHOLD", 5))
 WORD_COUNT_THRESHOLD = int(os.environ.get("WORD_COUNT_THRESHOLD", 2))
 API_USED = os.environ["API_USED"]
-API_KEY = os.environ["API_KEY"]
+API_KEY = os.environ.get("API_KEY", "")
 
-assert API_USED in ["openai", "google"]
+assert API_USED in ["openai", "google"], "API_USED must be 'openai' or 'google'"
 
 with open("config.yaml") as f:
     CONFIG = yaml.safe_load(f)
