@@ -1,11 +1,12 @@
 import abc
-import itertools
 import logging
 import typing
 
 import openai
 import openai.types.chat
-import google.generativeai as genai
+import vertexai
+import vertexai.generative_models
+import vertexai.language_models
 
 ChatCompletion = openai.types.chat.chat_completion.ChatCompletion
 
@@ -98,7 +99,9 @@ class GoogleOpinionRemover(OpinionRemover):
         :param model: name of the model to be used, defaults to "gemini-pro"
         """
         super().__init__(api_key, task, model)
-        self.initialized_model = genai.GenerativeModel(model)
+        self.initialized_model = vertexai.generative_models.GenerativeModel(
+            model
+        )
 
     def use_api_key(self, api_key: str) -> None:
         """
@@ -106,7 +109,8 @@ class GoogleOpinionRemover(OpinionRemover):
 
         :param api_key: API key to be used
         """
-        genai.configure(api_key=api_key)
+        # vertexai.configure(api_key=api_key)
+        vertexai.init()
 
     def send_request(self, content: str) -> dict:
         """

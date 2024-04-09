@@ -6,7 +6,7 @@ sys.path.insert(0, os.path.abspath(".."))
 # -- Project information -----------------------------------------------------
 
 project = "NewsFuse"
-author = "Bartosz Stachowiak, Andrzej Kajdasz"
+author = "Bartosz Stachowiak"
 version = "0.1.0"
 
 # -- General configuration ---------------------------------------------------
