@@ -21,14 +21,13 @@ logging.getLogger().addHandler(handler)
 fixed_model_path = (
     pathlib.Path(__file__) / ".." / "models" / "small_bert_model"
 ).resolve()
+
 MODEL_PATH = os.environ.get("MODEL_PATH", fixed_model_path)
 DECISION_THRESHOLD = float(os.environ.get("DECISION_THRESHOLD", 0.5))
 LENGTH_THRESHOLD = int(os.environ.get("LENGTH_THRESHOLD", 5))
 WORD_COUNT_THRESHOLD = int(os.environ.get("WORD_COUNT_THRESHOLD", 2))
 API_USED = os.environ["API_USED"]
-API_KEY = os.environ.get("API_KEY", "")
-
-assert API_USED in ["openai", "google"], "API_USED must be 'openai' or 'google'"
+API_MODEL = os.environ.get("API_MODEL", "")
 
 with open("config.yaml") as f:
     CONFIG = yaml.safe_load(f)
@@ -57,10 +56,12 @@ except FailedToLoadModelException as e:
         "Failed to load model: " + str(e) + ".\n Using random predictor."
     )
 
-if API_USED == "openai":
-    oppinion_remover = deopinionize.OpenAIOpinionRemover(API_KEY, TASK)
-else:
-    oppinion_remover = deopinionize.GoogleOpinionRemover(API_KEY, TASK)
+opinion_remover = deopinionize.resolve_opinion_remover(
+    API_USED,
+    TASK,
+    API_MODEL,
+)
+
 logging.info(f"Using {API_USED} API for deopinionization.")
 app = fastapi.FastAPI()
 
@@ -101,7 +102,7 @@ async def newsfusebackend(
 
     deopinionated_indexed = {}
     if not omit_rewrite:
-        deopinionated_sentences = oppinion_remover.remove_opinions(
+        deopinionated_sentences = opinion_remover.remove_opinions(
             opinionated_sentences
         )
         if deopinionated_sentences:
