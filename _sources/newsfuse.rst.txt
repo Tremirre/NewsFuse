@@ -1,16 +1,16 @@
 newsfuse package
 ================
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   newsfuse.deopinionize
+
 Submodules
 ----------
-
-newsfuse.deopinionize module
-----------------------------
-
-.. automodule:: newsfuse.deopinionize
-   :members:
-   :undoc-members:
-   :show-inheritance:
 
 newsfuse.exceptions module
 --------------------------

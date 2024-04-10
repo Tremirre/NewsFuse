@@ -1,0 +1,37 @@
+newsfuse.deopinionize package
+=============================
+
+Submodules
+----------
+
+newsfuse.deopinionize.base module
+---------------------------------
+
+.. automodule:: newsfuse.deopinionize.base
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+newsfuse.deopinionize.google module
+-----------------------------------
+
+.. automodule:: newsfuse.deopinionize.google
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+newsfuse.deopinionize.openai module
+-----------------------------------
+
+.. automodule:: newsfuse.deopinionize.openai
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: newsfuse.deopinionize
+   :members:
+   :undoc-members:
+   :show-inheritance:
