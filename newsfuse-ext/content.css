@@ -1,22 +1,26 @@
 .nf-hovered-item {
-    outline: red solid 1px !important;
-    cursor: pointer;
-    transition: all 0.1s ease-in-out;
+  outline: red solid 1px !important;
+  cursor: pointer;
+  transition: all 0.1s ease-in-out;
 }
 
 .nf-original-sentence {
-    background-color: rgb(255, 255, 0);
-    text-decoration: line-through;
+  background-color: rgb(255, 255, 0);
+  text-decoration: line-through;
+}
+
+.nf-highlighted-sentence {
+  transition: all 1s ease-in-out;
 }
 
 .nf-style-hidden {
-    background-color: rgba(255, 255, 255, 0) !important;
+  background-color: rgba(255, 255, 255, 0) !important;
 }
 
 .nf-translated-sentence {
-    background-color: rgb(163 163 232);
+  background-color: rgb(163 163 232);
 }
 
 .nf-original-sentence.nf-style-hidden {
-    display: none;
+  display: none;
 }
