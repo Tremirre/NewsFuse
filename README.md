@@ -66,9 +66,7 @@ The classifier is a simple transformer with a linear layer on top of it, trained
 
 After the classification, the FastAPI application sends the result back to the chrome extension in form of sentence-classification pairs.
 
-The translation mode is implemented by replacing the biased sentences with their unbiased counterparts using OpenAI's [GPT-3.5-turbo](https://openai.com/blog/better-language-models/) model via API,yet due to restrictions of the model the quality of translations varies heavily.
-
-The FastAPI app is intended to be deployed as Azure Function, yet it can be run locally as well.
+The translation mode is implemented by replacing the biased sentences with their unbiased counterparts using LLM (Large Language Model) via API, however due to restrictions of the model the quality of translations varies heavily.
 
 ## Controls
 
