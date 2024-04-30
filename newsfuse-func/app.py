@@ -18,11 +18,8 @@ handler = logging.StreamHandler()
 handler.setFormatter(logging.Formatter("%(asctime)s - %(message)s"))
 logging.getLogger().addHandler(handler)
 
-fixed_model_path = (
-    pathlib.Path(__file__) / ".." / "models" / "small_bert_model"
-).resolve()
 
-MODEL_PATH = os.environ.get("MODEL_PATH", fixed_model_path)
+MODEL_PATH = os.environ.get("MODEL_PATH", "")
 DECISION_THRESHOLD = float(os.environ.get("DECISION_THRESHOLD", 0.5))
 LENGTH_THRESHOLD = int(os.environ.get("LENGTH_THRESHOLD", 5))
 WORD_COUNT_THRESHOLD = int(os.environ.get("WORD_COUNT_THRESHOLD", 2))
