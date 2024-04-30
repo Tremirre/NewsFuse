@@ -4,7 +4,7 @@
 
 ## What is NewsFuse?
 
-**NewsFuse** is a chrome extension and Flask application that parse the news article for opinionated sentences and classifies them as biased or not biased as to help the reader to not be influenced by the author's opinion.
+**NewsFuse** is a chrome extension and FastAPI application that parse the news article for opinionated sentences and classifies them as biased or not biased as to help the reader to not be influenced by the author's opinion.
 
 It highlights the result as background color of the sentence - green for unbiased and red for biased.
 
@@ -56,19 +56,19 @@ The quotes detected as biased have been removed in their entirety.
 
 ### Chrome extension
 
-The chrome extension is a simple javascript application that parses the DOM of the current page and sends the text to the Flask application for processing. It then receives the result and highlights the biased sentences.
+The chrome extension is a simple javascript application that parses the DOM of the current page and sends the text to the FastAPI application for processing. It then receives the result and highlights the biased sentences.
 
-### Flask application
+### FastAPI application
 
-The Flask application is a simple REST API that receives the text corpus from the chrome extension, splits it to sentences with [nltk](https://www.nltk.org/) and sends it to pretrained BERT classifier.
+The FastAPI application is a simple REST API that receives the text corpus from the chrome extension, splits it to sentences with [nltk](https://www.nltk.org/) and sends it to pretrained BERT classifier.
 
 The classifier is a simple transformer with a linear layer on top of it, trained on [MBIC](https://www.kaggle.com/datasets/timospinde/mbic-a-media-bias-annotation-dataset) dataset. It uses [preprocessing layer](https://tfhub.dev/tensorflow/bert_en_uncased_preprocess/3) and small [BERT model](https://tfhub.dev/tensorflow/small_bert/bert_en_uncased_L-8_H-128_A-2/2) from [TensorFlow Hub](https://tfhub.dev/).
 
-After the classification, the Flask application sends the result back to the chrome extension in form of sentence-classification pairs.
+After the classification, the FastAPI application sends the result back to the chrome extension in form of sentence-classification pairs.
 
 The translation mode is implemented by replacing the biased sentences with their unbiased counterparts using OpenAI's [GPT-3.5-turbo](https://openai.com/blog/better-language-models/) model via API,yet due to restrictions of the model the quality of translations varies heavily.
 
-The flask app is intended to be deployed as Azure Function, yet it can be run locally as well.
+The FastAPI app is intended to be deployed as Azure Function, yet it can be run locally as well.
 
 ## Controls
 
@@ -83,7 +83,7 @@ The extension has the following controls:
 
 ## Limitations
 
-- The extension is not yet published on Chrome Web Store, so it has to be installed manually and the Flask application has to be run locally.
+- The extension is not yet published on Chrome Web Store, so it has to be installed manually and the FastAPI application has to be run locally.
 - The extension does not yet support direct quotes, so they are being parsed as any other sentence.
 - Reported speech is sometimes being incorrectly classified as biased.
 - Highlighting engine has some issues with highlighting sentences that contain HTML tags and might omit some of the sentences or highlight them incorrectly.
@@ -93,8 +93,7 @@ The extension has the following controls:
 ### Prerequisites
 
 - Python 3.10+
-- Azure Functions Core Tools
-- Azurite
+- Tensorflow classification model (a pretrained one is available [here](https://drive.google.com/file/d/1cU0Y-lWfqsXk_QwkfplDZwAtwg-vOGwQ/view?usp=sharing))
 
 ### Steps
 
@@ -102,34 +101,45 @@ The extension has the following controls:
    ```bash
     git clone https://github.com/Tremirre/NewsFuse.git
    ```
-2. Open the repository in VS Code
-   ```bash
-    cd NewsFuse
-    code .
-   ```
-3. Create and activate virtual environment in the newsfuse-func directory
+
+2. Create and activate virtual environment in the newsfuse-func directory
    ```bash
     cd newsfuse-func
     python -m venv .venv
     .venv\Scripts\activate
    ```
-4. Install dependencies
+3. Install dependencies
    ```bash
     pip install -r requirements.txt
    ```
-5. Run Azurite
+
+4. Export the environment variable `MODEL_PATH` with a path to your exported tensorflow model (a pretrained one is available [here](https://drive.google.com/file/d/1cU0Y-lWfqsXk_QwkfplDZwAtwg-vOGwQ/view?usp=sharing)).
 
    ```bash
-    azurite --silent
+   export MODEL_PATH=<your-path>   
+   ```
+5. Preprare environment variables for your API of choice:
+
+- For **Google Vertex AI** API - Export environment variables `API_USED` as "google", `GOOGLE_APPLICATION_CREDENTIALS` with credentials to your Vertex AI credentials JSON file and `GOOGLE_LOCATION` with the location that is to be used for the Gemini model (e.g., "europe-central2")
+   ```bash
+   export API_USED=google
+   export GOOGLE_APPLICATION_CREDENTIALS=<your-path-to-credentials>
+   export GOOGLE_LOCATION=<your-desired-location>
    ```
 
-6. Run the Flask application
+- For **OpenAI** API - Export the environment variables `API_USED` as "openai" and `OPENAI_API_KEY` with your api key.
+   ```bash
+   export API_USED=openai
+   export OPENAI_API_KEY=<your-api-key>
+   ```
+
+6. Run the FastAPI application
 
    ```bash
-    func host start
+   uvicorn app:app
    ```
 
-7. Add the extension to Chrome
+5. Add the extension to Chrome
 
    - Open Chrome
    - Go to `chrome://extensions/`
@@ -137,6 +147,6 @@ The extension has the following controls:
    - Click `Load unpacked`
    - Select `NewsFuse/newsfuse-ext` folder
 
-8. Open any news article and click `Parse Paragraphs` button
+6. Open any news article and click `Parse Paragraphs` button
 
-9. Enjoy!
+7. Enjoy!
