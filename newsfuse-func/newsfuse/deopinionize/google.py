@@ -1,9 +1,9 @@
 import json
 import os
 
-import vertexai
-import vertexai.generative_models
-import vertexai.language_models
+import vertexai  # type: ignore
+import vertexai.generative_models  # type: ignore
+import vertexai.language_models  # type: ignore
 
 from vertexai.generative_models import GenerationResponse
 

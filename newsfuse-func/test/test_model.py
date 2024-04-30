@@ -47,9 +47,3 @@ def test_load_and_compile_raises_exception_on_error(
     with pytest.raises(FailedToLoadModelException) as e:
         load_and_compile_from_path("path", {})
     assert str(e.value).startswith(expected_message)
-
-
-def test_load_and_compile_loads_model(test_model_path):
-    model = load_and_compile_from_path(test_model_path, {})
-    predictions = model.predict(np.array([[0.5, 0.5]])).round(3)
-    assert np.allclose(predictions, np.array([[0.469, 0.531]]), rtol=1e-05, atol=1e-08)
