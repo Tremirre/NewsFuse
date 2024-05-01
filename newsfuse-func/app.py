@@ -1,11 +1,11 @@
 import os
 import logging
-import pathlib
 
 import numpy as np
 import yaml
 import dotenv
 import fastapi
+import fastapi.middleware.cors
 
 from newsfuse import preprocess, postprocess, deopinionize
 from newsfuse.model import load_and_compile_from_path
@@ -61,6 +61,23 @@ opinion_remover = deopinionize.resolve_opinion_remover(
 
 logging.info(f"Using {API_USED} API for deopinionization.")
 app = fastapi.FastAPI()
+origins = os.environ.get("CORS_ORIGINS", "")
+if not origins:
+    logging.warning(
+        "CORS_ORIGINS environment variable not set, allowing all origins."
+    )
+    origins = ["*"]
+else:
+    origins = origins.split(",")
+    logging.info(f"Allowed origins: {origins}")
+
+app.add_middleware(
+    fastapi.middleware.cors.CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.post("/")
