@@ -74,9 +74,9 @@ The translation mode is implemented by replacing the biased sentences with their
 
 The extension has the following controls:
 
-- **Parse Paragraphs** - finds all paragraphs in the current page and parses them for biased sentences.
-- **Enter/Exit Grabber Mode** - allows to select a text on the page and parse it for biased sentences.
-- **Hide/Show Highlights** - hides/shows the highlights of biased/translated sentences.
+- **Parse Paragraphs** - finds all paragraphs in the current page and parses them for biased sentences. Using this button will work only on the first time the page is loaded, to parse the page again (e.g. in translation mode), the page has to be reloaded.
+- **Enter/Leave Grabber Mode** - allows to select a text on the page and parse it for biased sentences.
+- **Highlight Text** - hides/shows the highlights of biased/translated sentences.
 - **Translate** - changes the mode to translation mode. In this mode, the biased sentences are replaced with their unbiased counterparts.
 
 ## Limitations
@@ -96,6 +96,7 @@ The extension has the following controls:
 ### Steps
 
 1. Clone the repository
+
    ```bash
     git clone https://github.com/Tremirre/NewsFuse.git
    ```
@@ -107,6 +108,7 @@ The extension has the following controls:
     .venv\Scripts\activate
    ```
 3. Install dependencies
+
    ```bash
     pip install -r requirements.txt
    ```
@@ -114,22 +116,24 @@ The extension has the following controls:
 4. Export the environment variable `MODEL_PATH` with a path to your exported tensorflow model (a pretrained one is available [here](https://drive.google.com/file/d/1cU0Y-lWfqsXk_QwkfplDZwAtwg-vOGwQ/view?usp=sharing)).
 
    ```bash
-   export MODEL_PATH=<your-path>   
+   export MODEL_PATH=<your-path>
    ```
+
 5. Preprare environment variables for your API of choice:
 
 - For **Google Vertex AI** API - Export environment variables `API_USED` as "google", `GOOGLE_APPLICATION_CREDENTIALS` with credentials to your Vertex AI credentials JSON file and `GOOGLE_LOCATION` with the location that is to be used for the Gemini model (e.g., "europe-central2")
-   ```bash
-   export API_USED=google
-   export GOOGLE_APPLICATION_CREDENTIALS=<your-path-to-credentials>
-   export GOOGLE_LOCATION=<your-desired-location>
-   ```
+
+  ```bash
+  export API_USED=google
+  export GOOGLE_APPLICATION_CREDENTIALS=<your-path-to-credentials>
+  export GOOGLE_LOCATION=<your-desired-location>
+  ```
 
 - For **OpenAI** API - Export the environment variables `API_USED` as "openai" and `OPENAI_API_KEY` with your api key.
-   ```bash
-   export API_USED=openai
-   export OPENAI_API_KEY=<your-api-key>
-   ```
+  ```bash
+  export API_USED=openai
+  export OPENAI_API_KEY=<your-api-key>
+  ```
 
 6. Run the FastAPI application
 
@@ -137,7 +141,7 @@ The extension has the following controls:
    uvicorn app:app
    ```
 
-5. Add the extension to Chrome
+7. Add the extension to Chrome
 
    - Open Chrome
    - Go to `chrome://extensions/`
@@ -145,6 +149,6 @@ The extension has the following controls:
    - Click `Load unpacked`
    - Select `NewsFuse/newsfuse-ext` folder
 
-6. Open any news article and click `Parse Paragraphs` button
+8. Open any news article and click `Parse Paragraphs` button
 
-7. Enjoy!
+9. Enjoy!
