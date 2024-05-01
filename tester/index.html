@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="script.js" defer></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+      h1 {
+        margin: 0;
+        padding: 1rem;
+        background-color: #333;
+        color: white;
+        text-align: center;
+      }
+      .container {
+        display: flex;
+        width: 100vw;
+        padding: 0 0.5rem;
+        gap: 2rem;
+        border-bottom: 1px solid #333;
+      }
+      .input-holder {
+        padding: 0 1rem;
+        flex: 1;
+        padding-bottom: 1rem;
+      }
+      .input-holder textarea {
+        width: 100%;
+        padding: 0.5rem;
+        font-size: 1rem;
+        border: 1px solid #333;
+        border-radius: 0.25rem;
+        resize: none;
+      }
+      .result-holder {
+        padding: 0 1rem;
+        flex: 1;
+        border-left: 1px solid #333;
+        padding-bottom: 1rem;
+      }
+      .sentence {
+        display: flex;
+        justify-content: space-between;
+        width: calc(100% - 1rem);
+        padding-bottom: 5px;
+        margin-bottom: 5px;
+        border-bottom: 1px solid #333;
+        gap: 1rem;
+      }
+    </style>
+    <title>NF Tester</title>
+  </head>
+  <body>
+    <h1>NF Tester</h1>
+    <div class="container">
+      <div class="input-holder">
+        <h2>Input sentence for evaluation</h2>
+        <textarea
+          name="input"
+          id="preview-input"
+          cols="30"
+          rows="10"
+        ></textarea>
+      </div>
+      <div class="result-holder">
+        <h2>Result</h2>
+        <ol id="preview-result"></ol>
+      </div>
+    </div>
+  </body>
+</html>
