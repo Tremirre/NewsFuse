@@ -68,6 +68,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#module-newsfuse.preprocess">newsfuse.preprocess module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#newsfuse.preprocess.clean_corpus"><code class="docutils literal notranslate"><span class="pre">clean_corpus()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#newsfuse.preprocess.preprocess_corpus"><code class="docutils literal notranslate"><span class="pre">preprocess_corpus()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#newsfuse.preprocess.separate_by_condition"><code class="docutils literal notranslate"><span class="pre">separate_by_condition()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#newsfuse.preprocess.separate_by_total_length"><code class="docutils literal notranslate"><span class="pre">separate_by_total_length()</span></code></a></li>
@@ -211,6 +212,21 @@ dictionary of sentences with their original indices.</p>
 </section>
 <section id="module-newsfuse.preprocess">
 <span id="newsfuse-preprocess-module"></span><h2>newsfuse.preprocess module<a class="headerlink" href="#module-newsfuse.preprocess" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="newsfuse.preprocess.clean_corpus">
+<span class="sig-prename descclassname"><span class="pre">newsfuse.preprocess.</span></span><span class="sig-name descname"><span class="pre">clean_corpus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">corpus</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#newsfuse.preprocess.clean_corpus" title="Link to this definition"></a></dt>
+<dd><p>Cleans a corpus by removing quotes and stripping leading and trailing
+whitespace.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>corpus</strong> – corpus to be prepared</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>prepared corpus</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="newsfuse.preprocess.preprocess_corpus">
 <span class="sig-prename descclassname"><span class="pre">newsfuse.preprocess.</span></span><span class="sig-name descname"><span class="pre">preprocess_corpus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">corpus</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">word_count_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#newsfuse.preprocess.preprocess_corpus" title="Link to this definition"></a></dt>
