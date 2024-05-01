@@ -88,6 +88,7 @@ async def newsfusebackend(
     try:
         req_body = await request.json()
     except ValueError:
+        logging.warning("Invalid request body.")
         response.status_code = 400
         return {"error": "Invalid request body"}
     corpus = req_body.get("corpus", "")
@@ -95,6 +96,7 @@ async def newsfusebackend(
     omit_rewrite = req_body.get("omitRewrite", False)
     if not corpus:
         response.status_code = 400
+        logging.warning("Missing corpus in request body.")
         return {"error": "Missing corpus in request body."}
     invalid, valid, all_sentences = preprocess.preprocess_corpus(
         corpus, LENGTH_THRESHOLD, WORD_COUNT_THRESHOLD
@@ -105,6 +107,7 @@ async def newsfusebackend(
 
     if not valid:
         response.status_code = 400
+        logging.warning("Request body contains no valid sentences.")
         return {"error": "No valid sentences in the corpus."}
 
     valid_sentences = list(valid.values())
