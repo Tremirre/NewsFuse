@@ -66,14 +66,14 @@ if not origins:
     logging.warning(
         "CORS_ORIGINS environment variable not set, allowing all origins."
     )
-    origins = ["*"]
+    origins_list = ["*"]
 else:
-    origins = origins.split(",")
-    logging.info(f"Allowed origins: {origins}")
+    origins_list = origins.split(",")
+    logging.info(f"Allowed origins: {origins_list}")
 
 app.add_middleware(
     fastapi.middleware.cors.CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=origins_list,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
