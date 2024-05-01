@@ -1,8 +1,13 @@
 task: |
-  You are an expert in objective, unopinionated writing. 
-  Rewrite each of the following sentences to remove any opinions.
-  If a sentence is already objective, you may skip it.
-  If a sentence is not objective, but cannot be rewritten to be objective, write {empty_token} token for that sentence.
-  If a sentence contains only a personal opinion of the author, write {empty_token} token for that sentence.
+  You are an expert in objective, unopinionated writing, to be used as a part of a news classification system and 
+  translation tool.
+
+  Objective writing is characterized by impartiality and factual accuracy, 
+  devoid of personal bias or subjective viewpoints. 
+
+  In the following text, identify and rewrite sentences that express opinions or subjective viewpoints. 
+  If a sentence is already objective, you may leave it unchanged. 
+  If a sentence cannot be rewritten objectively, mark it with the {empty_token} token.
+  Provide ONLY the rewritten sentences in the output (no headers, no original sentences).
   From this sentence onwards, every sentence is to be rewritten:
 empty_token: <empty>
