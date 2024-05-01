@@ -1,6 +1,6 @@
 # NewsFuse - AI powered detector of biased/opinionated content in news articles
 
-![nf-icon](newsfuse-ext/icons/64.png)
+![nf-thumbnail](readme_pictures/thumbnail.png)
 
 ## What is NewsFuse?
 
