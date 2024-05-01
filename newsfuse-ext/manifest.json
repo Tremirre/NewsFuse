@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "NewsFuse",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "content_scripts": [
         {
             "matches": [
@@ -33,5 +33,6 @@
         },
         "default_popup": "popup/popup.html",
         "default_title": "NewsFuse"
-    }
+    },
+    "description": "NewsFuse is a dynamic Chrome extension designed to enhance your browsing experience. Seamlessly connecting with a backend server, it analyzes the textual content of articles you preview, identifying biased or opinionated sentences. With NewsFuse, you have the power to send these sentences to your chosen Language Model (LLM) API for rewriting, providing you with alternative, neutral perspectives. Say goodbye to biased content and hello to a more balanced browsing experience with NewsFuse."
 }

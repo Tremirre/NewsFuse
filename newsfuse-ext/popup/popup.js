@@ -1,19 +1,16 @@
 document.addEventListener("DOMContentLoaded", function () {
     const btnGrabber = document.getElementById("btn-text-grabber");
     const btnParse = document.getElementById("btn-parse");
-    const btnHighlight = document.getElementById("btn-highlight");
+    const chkHighlight = document.getElementById("chk-show-highlight");
     const chkTranslation = document.getElementById("chk-translation-mode");
     const btnGrabberLabelModeEnabled = "Leave Grabber Mode";
     const btnGrabberLabelModeDisabled = "Enter Grabber Mode";
-    const btnHighlightEnabled = "Hide Highlights";
-    const btnHighlightDisabled = "Show Highlights";
     sendMessage("popupLoaded", function (response) {
             translationMode = response.translationMode;
             grabberMode = response.grabberMode;
             highlightHidden = response.highlightHidden;
             chkTranslation.checked = translationMode;
             btnGrabber.textContent = grabberMode ? btnGrabberLabelModeEnabled : btnGrabberLabelModeDisabled;
-            btnHighlight.textContent = highlightHidden ? btnHighlightDisabled : btnHighlightEnabled;
         }
     );
     chkTranslation.addEventListener("change", function () {
@@ -24,29 +21,30 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
+    chkHighlight.addEventListener("change", function () {
+        if (chkHighlight.checked) {
+            sendMessage("showHighlights");
+        } else {
+            sendMessage("hideHighlights");
+        }
+    });
+
 
     btnGrabber.addEventListener("click", function () {
         if (btnGrabber.textContent === btnGrabberLabelModeDisabled) {
             btnGrabber.textContent = btnGrabberLabelModeEnabled;
+            btnParse.disabled = true;
             sendMessage("startPicker");
         } else {
+            btnParse.disabled = false;
             btnGrabber.textContent = btnGrabberLabelModeDisabled;
             sendMessage("stopPicker");
-        }
-    });
-
-    btnHighlight.addEventListener("click", function () {
-        if (btnHighlight.textContent === btnHighlightEnabled) {
-            btnHighlight.textContent = btnHighlightDisabled;
-            sendMessage("hideHighlights");
-        } else {
-            btnHighlight.textContent = btnHighlightEnabled;
-            sendMessage("showHighlights");
         }
     });
     
     btnParse.addEventListener("click", function () {
         sendMessage("parse");
+        btnParse.disabled = true;
     });
 });
 

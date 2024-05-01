@@ -1,55 +1,140 @@
 <html>
-  <link
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-    rel="stylesheet"
-  />
   <style>
+    :root {
+      --switch-height: 24px;
+      --switch-width: 48px;
+      --switch-padding: 4px;
+      --switch-ball-size: calc(
+        var(--switch-height) - var(--switch-padding) * 2
+      );
+      --switch-ball-translate: calc(var(--switch-width) - var(--switch-height));
+      --active-color: #ed0b0b;
+    }
+    html {
+      width: 200px;
+      height: 180px;
+    }
+
     body {
       background-color: #474444;
       color: #fff;
       font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      width: 200px;
-      height: 100px;
     }
+
     h1 {
       text-align: center;
       font-size: medium;
     }
+
     button {
       width: 100%;
-      margin-bottom: 5px;
+      padding: 5px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.5s;
+      font-weight: bold;
     }
+
+    button:disabled {
+      pointer-events: none;
+    }
+
+    button:active,
+    button:hover {
+      background-color: var(--active-color);
+    }
+
     ul {
       list-style-type: none;
       padding: 0;
     }
+
+    li {
+      margin-bottom: 5px;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: var(--switch-width);
+      height: var(--switch-height);
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      -webkit-transition: 0.4s;
+      transition: 0.4s;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: var(--switch-ball-size);
+      width: var(--switch-ball-size);
+      left: var(--switch-padding);
+      bottom: var(--switch-padding);
+      background-color: white;
+      -webkit-transition: 0.4s;
+      transition: 0.4s;
+    }
+
+    input:checked + .slider {
+      background-color: var(--active-color);
+    }
+
+    input:focus + .slider {
+      box-shadow: 0 0 1px var(--active-color);
+    }
+
+    input:checked + .slider:before {
+      -webkit-transform: translateX(var(--switch-ball-translate));
+      -ms-transform: translateX(var(--switch-ball-translate));
+      transform: translateX(var(--switch-ball-translate));
+    }
+
+    .slider.round {
+      border-radius: var(--switch-height);
+    }
+
+    .slider.round:before {
+      border-radius: 50%;
+    }
   </style>
   <script src="popup.js"></script>
   <body>
-    <h1 class="m-2">NewsFuse Client</h1>
-    <main class="container p-3">
+    <h1>NewsFuse Client</h1>
+    <main>
       <ul>
         <li>
-          <button class="btn btn-sm btn-primary" id="btn-parse">
-            Parse Paragraphs
-          </button>
+          <button id="btn-parse">Parse Paragraphs</button>
         </li>
         <li>
-          <button class="btn btn-sm btn-primary" id="btn-text-grabber">
-            Enter Grabber Mode
-          </button>
+          <button id="btn-text-grabber">Enter Grabber Mode</button>
         </li>
         <li>
-          <button class="btn btn-sm btn-secondary" id="btn-highlight">
-            Hide Highlights
-          </button>
+          <span class="switch">
+            <input type="checkbox" id="chk-show-highlight" checked />
+            <label class="slider round" for="chk-show-highlight"></label>
+          </span>
+          <label for="chk-show-highlight" class="form-check-label">
+            Highlight Text
+          </label>
         </li>
-        <li class="form-check">
-          <input
-            type="checkbox"
-            id="chk-translation-mode"
-            class="form-check-input"
-          />
+        <li>
+          <span class="switch">
+            <input
+              type="checkbox"
+              id="chk-translation-mode"
+              class="form-check-input"
+            />
+            <label class="slider round" for="chk-translation-mode"></label>
+          </span>
           <label for="chk-translation-mode" class="form-check-label">
             Translate
           </label>
