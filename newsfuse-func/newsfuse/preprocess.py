@@ -1,8 +1,27 @@
+import re
 import nltk  # type: ignore
 
 from typing import Callable
 
 from newsfuse.types import IndexedSentences
+
+
+quote_pattern = re.compile(r"\"(.*?)\"")
+styled_quote_pattern = re.compile(r"“(.*?)”")
+
+
+def clean_corpus(corpus: str) -> str:
+    """
+    Cleans a corpus by removing quotes and stripping leading and trailing
+    whitespace.
+
+    :param corpus: corpus to be prepared
+    :return: prepared corpus
+    """
+    corpus = quote_pattern.sub("", corpus)
+    corpus = styled_quote_pattern.sub("", corpus)
+    corpus = corpus.strip()
+    return corpus
 
 
 def split_to_sentences(text: str) -> list[str]:

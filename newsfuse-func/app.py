@@ -1,4 +1,5 @@
 import os
+import re
 import logging
 
 import numpy as np
@@ -89,7 +90,8 @@ async def newsfusebackend(
     except ValueError:
         response.status_code = 400
         return {"error": "Invalid request body"}
-    corpus = req_body.get("corpus", "").strip()
+    corpus = req_body.get("corpus", "")
+    corpus = preprocess.clean_corpus(corpus)
     omit_rewrite = req_body.get("omitRewrite", False)
     if not corpus:
         response.status_code = 400
