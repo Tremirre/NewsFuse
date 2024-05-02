@@ -15,7 +15,10 @@ dotenv.load_dotenv()
 
 logging.basicConfig(level=logging.INFO)
 handler = logging.StreamHandler()
-handler.setFormatter(logging.Formatter("%(asctime)s - %(message)s"))
+handler.setFormatter(
+    logging.Formatter("%(levelname)s %(asctime)s - %(message)s")
+)
+logging.getLogger().handlers.clear()
 logging.getLogger().addHandler(handler)
 
 
